@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Audit RGPD minimal orienté parcours des données, droits, cohérence documentaire, entité réelle, stockage local et compteur de vigilance.">
   <meta name="referrer" content="no-referrer">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:; connect-src 'self' https:; base-uri 'self'; form-action 'self'">
   <title>RGPD Data Journey Audit</title>
   <link rel="stylesheet" href="./assets/styles.css">
+  <link rel="stylesheet" href="./assets/auto-fetch.css">
 </head>
 <body>
   <header class="hero">
@@ -19,6 +20,8 @@
         <span>SITE_RESULT</span>
         <span>+</span>
         <span>LEGAL_ENTITY</span>
+        <span>+</span>
+        <span>FETCH</span>
         <span>+</span>
         <span>SSF-IRS</span>
         <span>+</span>
@@ -41,6 +44,7 @@
         <li>mentions légales ;</li>
         <li>politique de confidentialité ;</li>
         <li>cookies, traceurs et stockage local ;</li>
+        <li>récupération volontaire depuis l'URL auditée lorsque le navigateur peut lire le site ;</li>
         <li>entité réelle déclarée, SIREN, SIRET, adresse et source externe ;</li>
         <li>emplacement exact des informations sur le site audité ;</li>
         <li>validation publique SSF-IRS : SAT, UNSAT, UNKNOWN ;</li>
@@ -52,13 +56,30 @@
 
     <section class="panel" id="audit">
       <h2>Audit déclaratif minimal</h2>
-      <p class="muted">Cette version ne visite pas automatiquement le site renseigné. Elle construit une lecture locale à partir des éléments observés ou indiqués par l'utilisateur.</p>
+      <p class="muted">Cette version peut tenter une récupération automatique uniquement après action de l'utilisateur. Si le site refuse la lecture depuis le navigateur, les champs manuels restent disponibles.</p>
       <form id="audit-form">
         <div class="field full">
           <label for="target-url">Site ou interface auditée</label>
           <input id="target-url" name="target-url" type="url" inputmode="url" placeholder="https://example.org" autocomplete="off">
-          <span class="help">L'adresse reste locale dans cette version. L'utilisateur peut afficher, restaurer ou effacer les traces locales.</span>
+          <span class="help">L'adresse reste visible localement. L'utilisateur peut afficher, restaurer ou effacer les traces locales.</span>
         </div>
+
+        <section class="auto-fetch-box" aria-labelledby="auto-fetch-title">
+          <h3 id="auto-fetch-title">Récupération automatique depuis l'URL</h3>
+          <p class="muted">Action volontaire : l'interface tente de lire la page publique, d'identifier les liens utiles, d'extraire SIREN/SIRET/adresse si présents, puis d'interroger l'API Recherche d'Entreprises. Le résultat préremplit les champs, qui restent modifiables.</p>
+          <div class="auto-fetch-steps" aria-label="Étapes de récupération automatique">
+            <article><strong>1. Lire</strong><span>Page HTTPS renseignée, si CORS l'autorise.</span></article>
+            <article><strong>2. Extraire</strong><span>Mentions, SIREN, SIRET, adresse, liens utiles.</span></article>
+            <article><strong>3. Vérifier</strong><span>Recherche d'Entreprises, si API accessible.</span></article>
+            <article><strong>4. Afficher</strong><span>Préremplissage puis SSF-IRS SAT / UNSAT / UNKNOWN.</span></article>
+          </div>
+          <div class="actions">
+            <button type="button" id="auto-fetch-site">Préremplir depuis le site et l'API</button>
+            <button type="button" class="secondary" id="clear-auto-fetch">Effacer le résultat automatique</button>
+          </div>
+          <div id="auto-fetch-status" class="auto-fetch-status" role="status" aria-live="polite">Aucune récupération lancée.</div>
+          <pre id="auto-fetch-output" aria-live="polite">Aucune récupération affichée.</pre>
+        </section>
 
         <fieldset>
           <legend>Documents visibles</legend>
@@ -168,11 +189,13 @@
       <h2>Parcours des données</h2>
       <ol class="journey">
         <li>Utilisateur</li>
-        <li>Action dans l'interface</li>
+        <li>Action volontaire : saisie URL ou récupération automatique</li>
+        <li>Lecture de la page publique si le navigateur y est autorisé</li>
         <li>Données saisies ou observées</li>
+        <li>Recherche API publique si un SIREN, SIRET ou nom est exploitable</li>
         <li>Pré-validation SSF-IRS : SAT / UNSAT / UNKNOWN</li>
         <li>Trace locale visible dans le navigateur</li>
-        <li>Traitement local ou transmission externe</li>
+        <li>Traitement local ou transmission externe explicitée</li>
         <li>Entité réelle / responsable déclaré</li>
         <li>Acteurs / destinataires</li>
         <li>Finalités</li>
@@ -185,7 +208,7 @@
     <section class="panel" id="local-journal">
       <h2>Journal local des actions</h2>
       <p>Cette interface tient un carnet local dans le navigateur. Il montre ce que cette page écrit localement : actions utiles, lecture générée, compteur, statuts SSF-IRS et dernier audit restaurable.</p>
-      <p class="muted">Dans cette version, ces éléments ne sont pas transmis automatiquement à un serveur. Ils restent dans ce navigateur jusqu'à effacement par l'utilisateur ou suppression par le navigateur.</p>
+      <p class="muted">Dans cette version, ces éléments ne sont pas transmis automatiquement à un serveur. Les requêtes automatiques ne sont lancées qu'après action de l'utilisateur.</p>
 
       <div class="local-storage-map">
         <article>
@@ -223,7 +246,7 @@
 
     <section class="callout" id="limits">
       <h2>Limites</h2>
-      <p>Cette interface ne produit pas de verdict juridique automatique. Elle aide à distinguer les faits observables, les déclarations trouvées, les données manipulées, leur emplacement, les traces locales, les zones floues, le niveau de vigilance documentaire et les actions possibles.</p>
+      <p>Cette interface ne produit pas de verdict juridique automatique. Elle aide à distinguer les faits observables, les déclarations trouvées, les données manipulées, leur emplacement, les requêtes lancées par l'utilisateur, les traces locales, les zones floues, le niveau de vigilance documentaire et les actions possibles.</p>
     </section>
   </main>
 
@@ -235,5 +258,6 @@
   </footer>
 
   <script src="./assets/app.js"></script>
+  <script src="./assets/entity-auto-fetch.js"></script>
 </body>
 </html>
