@@ -5,16 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Notice de confidentialité de RGPD Data Journey Audit.">
   <meta name="referrer" content="no-referrer">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:; connect-src 'self' https:; base-uri 'self'; form-action 'self'">
   <title>Confidentialité — RGPD Data Journey Audit</title>
   <link rel="stylesheet" href="./assets/styles.css">
+  <link rel="stylesheet" href="./assets/auto-fetch.css">
 </head>
 <body>
   <header class="hero compact">
     <div class="shell hero-inner">
       <p class="eyebrow">Confidentialité</p>
       <h1>Le journal reste lisible et contrôlable.</h1>
-      <p class="lead">Cette notice décrit le comportement de la version publique minimale : traitement local, journal visible, dernier audit restaurable et effacement utilisateur.</p>
+      <p class="lead">Cette notice décrit le comportement de la version publique minimale : traitement local, récupération volontaire, journal visible, dernier audit restaurable et effacement utilisateur.</p>
     </div>
   </header>
 
@@ -27,9 +28,23 @@
         <li>aucun SDK publicitaire ;</li>
         <li>aucun outil d'analytics externe ;</li>
         <li>aucun envoi automatique du journal local vers un serveur ;</li>
-        <li>aucune requête automatique vers Annuaire Entreprises, Sirene, RNE, Pappers ou data.gouv dans cette version ;</li>
+        <li>aucune requête externe lancée avant action volontaire de l'utilisateur ;</li>
         <li>aucune collecte volontaire de dossiers personnels ou de pièces administratives.</li>
       </ul>
+    </section>
+
+    <section class="panel">
+      <h2>Récupération volontaire depuis l'URL</h2>
+      <p>Lorsque l'utilisateur clique sur le bouton de préremplissage automatique, l'interface peut tenter de lire l'URL HTTPS renseignée depuis le navigateur.</p>
+      <p>Si le site audité autorise cette lecture, la page peut extraire des éléments visibles : liens vers les mentions légales, politique de confidentialité, cookies, contact, SIREN, SIRET, adresse ou dénomination.</p>
+      <p>Si le site audité bloque cette lecture, l'interface affiche l'échec et conserve le mode manuel. Le résultat reste alors en UNKNOWN pour la récupération automatique.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Recherche d'entreprise</h2>
+      <p>Si un SIREN, un SIRET ou un nom d'entité est détecté, l'interface peut interroger l'API publique Recherche d'Entreprises afin de préremplir les champs société.</p>
+      <p>Cette requête est déclenchée par l'utilisateur. Elle ne constitue pas une certification officielle, ni un verdict juridique. Elle sert à enrichir la lecture SSF-IRS.</p>
+      <p>Aucune clé API n'est utilisée dans cette version publique.</p>
     </section>
 
     <section class="panel">
@@ -48,8 +63,8 @@ rgpd-data-journey-audit:last-local-audit</pre>
     </section>
 
     <section class="panel">
-      <h2>Données saisies</h2>
-      <p>La version actuelle peut permettre à l'utilisateur de renseigner une adresse de site ou des observations manuelles. Ces informations servent à générer une lecture locale dans le navigateur.</p>
+      <h2>Données saisies ou récupérées</h2>
+      <p>La version actuelle peut permettre à l'utilisateur de renseigner une adresse de site, des observations manuelles ou de lancer une tentative de préremplissage automatique.</p>
       <p>Les champs société — dénomination, forme juridique, SIREN, SIRET, adresse déclarée, source externe et emplacement sur le site — sont utilisés localement pour produire une restitution SSF-IRS SAT / UNSAT / UNKNOWN.</p>
       <p>Lorsque l'utilisateur génère une lecture locale, le dernier audit peut être conservé dans le navigateur pour affichage, vérification, restauration ou effacement.</p>
     </section>
@@ -57,6 +72,8 @@ rgpd-data-journey-audit:last-local-audit</pre>
     <section class="panel">
       <h2>Contrôles utilisateur</h2>
       <ul>
+        <li>lancer ou non le préremplissage automatique ;</li>
+        <li>corriger les champs préremplis ;</li>
         <li>afficher une explication simple du stockage local ;</li>
         <li>voir ce qui est stocké par cette interface ;</li>
         <li>afficher le journal local ;</li>
@@ -69,7 +86,7 @@ rgpd-data-journey-audit:last-local-audit</pre>
 
     <section class="panel">
       <h2>Affichage et validation locale</h2>
-      <p>Le compteur de vigilance, le pourcentage, l'aiguille, les statuts SSF-IRS et le tableau société sont calculés dans le navigateur à partir des informations indiquées par l'utilisateur.</p>
+      <p>Le compteur de vigilance, le pourcentage, l'aiguille, les statuts SSF-IRS et le tableau société sont calculés dans le navigateur à partir des informations indiquées ou préremplies.</p>
       <p>Le résultat ne constitue pas une certification, une preuve de fraude ou un avis juridique. Il s'agit d'une lecture documentaire destinée à orienter la vigilance.</p>
     </section>
 
@@ -80,7 +97,7 @@ rgpd-data-journey-audit:last-local-audit</pre>
 
     <section class="callout">
       <strong>Principe</strong>
-      <p>Pas de profilage, pas de transmission applicative par défaut, pas de donnée personnelle réelle dans le dépôt public. Les traces locales sont visibles, restaurables et effaçables par l'utilisateur.</p>
+      <p>Pas de profilage, pas de transmission applicative par défaut, pas de donnée personnelle réelle dans le dépôt public. Les requêtes externes sont volontaires, les traces locales sont visibles, restaurables et effaçables par l'utilisateur.</p>
     </section>
   </main>
 
