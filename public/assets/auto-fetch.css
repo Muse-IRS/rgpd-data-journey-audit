@@ -1,0 +1,57 @@
+.auto-fetch-box {
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid rgba(169, 200, 255, .28);
+  border-radius: 18px;
+  background: linear-gradient(150deg, rgba(185, 243, 223, .08), rgba(169, 200, 255, .035));
+}
+
+.auto-fetch-box h3 {
+  margin-bottom: .45rem;
+}
+
+.auto-fetch-status {
+  margin-top: .85rem;
+  padding: .75rem .9rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: var(--accent);
+  background: rgba(255, 255, 255, .035);
+  font-weight: 750;
+}
+
+#auto-fetch-output {
+  margin-top: .85rem;
+  min-height: 88px;
+}
+
+.auto-fetch-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .7rem;
+  margin: 1rem 0;
+}
+
+.auto-fetch-steps article {
+  padding: .8rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .025);
+}
+
+.auto-fetch-steps strong {
+  display: block;
+  margin-bottom: .25rem;
+  color: var(--accent-2);
+}
+
+.auto-fetch-steps span {
+  color: var(--muted);
+  font-size: .92rem;
+}
+
+@media (max-width: 760px) {
+  .auto-fetch-steps {
+    grid-template-columns: 1fr;
+  }
+}
