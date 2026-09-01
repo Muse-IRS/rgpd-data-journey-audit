@@ -1,4 +1,5 @@
 const LOG_KEY = 'rgpd-data-journey-audit:local-action-log'
+const AUDIT_KEY = 'rgpd-data-journey-audit:last-local-audit'
 const SVG_NS = 'http://www.w3.org/2000/svg'
 
 const form = document.querySelector('#audit-form')
@@ -11,19 +12,39 @@ const entityHost = document.querySelector('#entity-host')
 const refreshLog = document.querySelector('#refresh-log')
 const exportLog = document.querySelector('#export-log')
 const clearLog = document.querySelector('#clear-log')
+const explainLocalStorage = document.querySelector('#explain-local-storage')
+const showLocalStorage = document.querySelector('#show-local-storage')
+const restoreLastAudit = document.querySelector('#restore-last-audit')
+const clearAllLocalData = document.querySelector('#clear-all-local-data')
 const logOutput = document.querySelector('#log-output')
+const localStorageExplanation = document.querySelector('#local-storage-explanation')
+const storageOutput = document.querySelector('#storage-output')
+
+function readJson(key, fallback) {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(key) || 'null')
+    return parsed === null ? fallback : parsed
+  } catch {
+    return fallback
+  }
+}
 
 function readLog() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(LOG_KEY) || '[]')
-    return Array.isArray(parsed) ? parsed : []
-  } catch {
-    return []
-  }
+  const parsed = readJson(LOG_KEY, [])
+  return Array.isArray(parsed) ? parsed : []
 }
 
 function writeLog(entries) {
   localStorage.setItem(LOG_KEY, JSON.stringify(entries.slice(-250)))
+}
+
+function readLastAudit() {
+  const parsed = readJson(AUDIT_KEY, null)
+  return parsed && typeof parsed === 'object' ? parsed : null
+}
+
+function writeLastAudit(snapshot) {
+  localStorage.setItem(AUDIT_KEY, JSON.stringify(snapshot))
 }
 
 function safeText(value, maxLength = 120) {
@@ -59,6 +80,16 @@ function checkboxState(name) {
 function fieldValue(name) {
   const item = form.elements[name]
   return item ? safeText(item.value, 180) : ''
+}
+
+function setCheckbox(name, value) {
+  const item = form.elements[name]
+  if (item) item.checked = Boolean(value)
+}
+
+function setField(name, value) {
+  const item = form.elements[name]
+  if (item) item.value = value || ''
 }
 
 function normalizeDigits(value) {
@@ -97,6 +128,68 @@ function ssfNote(status, sat, unsat, unknown) {
   if (status === 'SAT') return sat
   if (status === 'UNSAT') return unsat
   return unknown
+}
+
+function collectFormData() {
+  return {
+    target: fieldValue('target-url'),
+    legalNotice: checkboxState('legal-notice'),
+    privacyPolicy: checkboxState('privacy-policy'),
+    cookiesInfo: checkboxState('cookies-info'),
+    rightsContact: checkboxState('rights-contact'),
+    entityIdentified: checkboxState('entity-identified'),
+    registryMatch: checkboxState('registry-match'),
+    entityMismatch: checkboxState('entity-mismatch'),
+    paymentThirdParty: checkboxState('payment-third-party'),
+    localStorageObserved: checkboxState('local-storage-observed'),
+    externalServices: checkboxState('external-services'),
+    retentionInfo: checkboxState('retention-info'),
+    legalBasisInfo: checkboxState('legal-basis-info'),
+    entityName: fieldValue('entity-name'),
+    legalForm: fieldValue('legal-form'),
+    siren: fieldValue('siren'),
+    siret: fieldValue('siret'),
+    entityAddress: fieldValue('entity-address'),
+    officialSource: fieldValue('official-source'),
+    entityLocation: fieldValue('entity-location'),
+    sirenLocation: fieldValue('siren-location'),
+    siretLocation: fieldValue('siret-location'),
+    addressLocation: fieldValue('address-location'),
+    rightsLocation: fieldValue('rights-location')
+  }
+}
+
+function fillForm(data) {
+  setField('target-url', data.target)
+  setField('entity-name', data.entityName)
+  setField('legal-form', data.legalForm)
+  setField('siren', data.siren)
+  setField('siret', data.siret)
+  setField('entity-address', data.entityAddress)
+  setField('official-source', data.officialSource)
+  setField('entity-location', data.entityLocation)
+  setField('siren-location', data.sirenLocation)
+  setField('siret-location', data.siretLocation)
+  setField('address-location', data.addressLocation)
+  setField('rights-location', data.rightsLocation)
+
+  ;[
+    'legal-notice',
+    'privacy-policy',
+    'cookies-info',
+    'rights-contact',
+    'entity-identified',
+    'registry-match',
+    'entity-mismatch',
+    'payment-third-party',
+    'local-storage-observed',
+    'external-services',
+    'retention-info',
+    'legal-basis-info'
+  ].forEach(name => {
+    const camel = name.replace(/-([a-z])/g, (_, char) => char.toUpperCase())
+    setCheckbox(name, data[camel])
+  })
 }
 
 function buildEntityRows(data) {
@@ -370,6 +463,7 @@ function buildReading(data, gauge) {
   actions.push('Comparer mentions légales, confidentialité, cookies et fonctionnement observable.')
   actions.push('Vérifier l’entité déclarée dans une source officielle lorsque cette information est disponible.')
   actions.push('Contrôler où chaque donnée est affichée sur le site : footer, mentions légales, confidentialité, CGV, contact ou paiement.')
+  actions.push('Afficher les traces locales de cette interface pour comprendre ce qui reste dans le navigateur.')
   actions.push('Conserver les captures ou liens utiles avant toute démarche.')
 
   return {
@@ -571,44 +665,123 @@ function renderReading(reading, target) {
   result.hidden = false
 }
 
-form.addEventListener('submit', event => {
-  event.preventDefault()
-  const target = document.querySelector('#target-url').value.trim()
-  const data = {
-    legalNotice: checkboxState('legal-notice'),
-    privacyPolicy: checkboxState('privacy-policy'),
-    cookiesInfo: checkboxState('cookies-info'),
-    rightsContact: checkboxState('rights-contact'),
-    entityIdentified: checkboxState('entity-identified'),
-    registryMatch: checkboxState('registry-match'),
-    entityMismatch: checkboxState('entity-mismatch'),
-    paymentThirdParty: checkboxState('payment-third-party'),
-    localStorageObserved: checkboxState('local-storage-observed'),
-    externalServices: checkboxState('external-services'),
-    retentionInfo: checkboxState('retention-info'),
-    legalBasisInfo: checkboxState('legal-basis-info'),
-    entityName: fieldValue('entity-name'),
-    legalForm: fieldValue('legal-form'),
-    siren: fieldValue('siren'),
-    siret: fieldValue('siret'),
-    entityAddress: fieldValue('entity-address'),
-    officialSource: fieldValue('official-source'),
-    entityLocation: fieldValue('entity-location'),
-    sirenLocation: fieldValue('siren-location'),
-    siretLocation: fieldValue('siret-location'),
-    addressLocation: fieldValue('address-location'),
-    rightsLocation: fieldValue('rights-location')
+function snapshotForStorage(data, entityRows, gauge) {
+  return {
+    savedAt: new Date().toISOString(),
+    explanation: 'Dernier audit local conservé uniquement dans ce navigateur pour affichage, reprise, export ou effacement par l’utilisateur.',
+    data,
+    ssfRows: entityRows.map(row => ({
+      label: row.label,
+      value: row.value,
+      location: row.location,
+      source: row.source,
+      status: row.status,
+      note: row.note
+    })),
+    vigilance: {
+      score: gauge.score,
+      percent: gauge.percent,
+      zone: gauge.zone,
+      title: gauge.title,
+      reasons: gauge.reasons,
+      ssf: gauge.ssf
+    }
   }
+}
+
+function runAudit(data, options = {}) {
+  const persist = options.persist !== false
   const entityRows = buildEntityRows(data)
   const gauge = buildGauge(data, entityRows)
   const reading = buildReading(data, gauge)
   renderGauge(gauge)
   renderSsfSummary(entityRows)
   renderEntityPanel(entityRows)
-  renderReading(reading, target)
+  renderReading(reading, data.target)
+
+  if (persist) {
+    writeLastAudit(snapshotForStorage(data, entityRows, gauge))
+  }
+
+  return { entityRows, gauge, reading }
+}
+
+function buildStorageInventory() {
+  const log = readLog()
+  const lastAudit = readLastAudit()
+  return {
+    explanation: 'Ces données sont celles que cette interface conserve dans le navigateur pour rendre le traitement visible et contrôlable.',
+    storageLocation: 'localStorage du navigateur, pour cette adresse GitHub Pages uniquement.',
+    automaticServerTransmission: false,
+    keys: [
+      {
+        key: LOG_KEY,
+        purpose: 'Journal local des actions utiles dans l’interface.',
+        entries: log.length,
+        visibleInInterface: true,
+        exportable: true,
+        erasable: true,
+        value: log
+      },
+      {
+        key: AUDIT_KEY,
+        purpose: 'Dernier audit local pour reprise et vérification par l’utilisateur.',
+        entries: lastAudit ? 1 : 0,
+        visibleInInterface: true,
+        exportable: true,
+        erasable: true,
+        value: lastAudit
+      }
+    ]
+  }
+}
+
+function renderLocalStorageExplanation() {
+  localStorageExplanation.hidden = false
+  localStorageExplanation.innerHTML = ''
+
+  const title = document.createElement('h3')
+  title.textContent = 'Explication simple : carnet local du navigateur'
+
+  const paragraphs = [
+    'Cette interface peut écrire deux éléments dans votre navigateur : un journal des actions et le dernier audit local.',
+    'Ces données restent sur l’appareil et le navigateur utilisés. Elles ne sont pas envoyées automatiquement à Muze-X, GitHub, Pappers, data.gouv ou un autre service par cette version.',
+    'Le journal sert à montrer concrètement ce qu’une interface peut mémoriser localement : clics, audit généré, compteur affiché, export ou effacement.',
+    'Le dernier audit local sert à reprendre une lecture déjà générée : site renseigné, informations société, SIREN/SIRET, emplacements, source indiquée, statuts SSF-IRS et compteur.',
+    'Ces traces locales ne sont pas une preuve certifiée. Elles constituent une restitution contrôlable par l’utilisateur.'
+  ]
+
+  const listTitle = document.createElement('strong')
+  listTitle.textContent = 'Contrôles disponibles'
+
+  const list = document.createElement('ul')
+  ;['Afficher ce qui est stocké', 'Exporter le journal JSON', 'Restaurer le dernier audit local', 'Effacer le journal', 'Effacer toutes les données locales de cette interface'].forEach(item => {
+    const li = document.createElement('li')
+    li.textContent = item
+    list.append(li)
+  })
+
+  localStorageExplanation.append(title)
+  paragraphs.forEach(text => {
+    const p = document.createElement('p')
+    p.textContent = text
+    localStorageExplanation.append(p)
+  })
+  localStorageExplanation.append(listTitle, list)
+}
+
+function displayLocalStorageInventory() {
+  const inventory = buildStorageInventory()
+  storageOutput.textContent = JSON.stringify(inventory, null, 2)
+}
+
+form.addEventListener('submit', event => {
+  event.preventDefault()
+  const data = collectFormData()
+  const { gauge } = runAudit(data)
   logAction('audit:local-reading-generated', {
-    targetProvided: Boolean(target),
-    target: target || null,
+    targetProvided: Boolean(data.target),
+    target: data.target || null,
     checks: {
       legalNotice: data.legalNotice,
       privacyPolicy: data.privacyPolicy,
@@ -629,6 +802,10 @@ form.addEventListener('submit', event => {
       sirenProvided: Boolean(data.siren),
       siretProvided: Boolean(data.siret),
       officialSource: data.officialSource || null
+    },
+    localStorage: {
+      lastAuditSaved: true,
+      storageKey: AUDIT_KEY
     },
     vigilance: {
       score: gauge.score,
@@ -667,6 +844,40 @@ exportLog.addEventListener('click', () => {
 clearLog.addEventListener('click', () => {
   localStorage.removeItem(LOG_KEY)
   logOutput.textContent = 'Journal local effacé.'
+})
+
+explainLocalStorage.addEventListener('click', () => {
+  renderLocalStorageExplanation()
+  logAction('local-storage:explanation-displayed')
+})
+
+showLocalStorage.addEventListener('click', () => {
+  displayLocalStorageInventory()
+  logAction('local-storage:inventory-displayed')
+})
+
+restoreLastAudit.addEventListener('click', () => {
+  const snapshot = readLastAudit()
+  if (!snapshot || !snapshot.data) {
+    storageOutput.textContent = 'Aucun dernier audit local à restaurer.'
+    logAction('local-storage:restore-empty')
+    return
+  }
+
+  fillForm(snapshot.data)
+  runAudit(snapshot.data, { persist: false })
+  storageOutput.textContent = 'Dernier audit local restauré dans le formulaire et la restitution.'
+  logAction('local-storage:last-audit-restored', {
+    savedAt: snapshot.savedAt || null,
+    storageKey: AUDIT_KEY
+  })
+})
+
+clearAllLocalData.addEventListener('click', () => {
+  localStorage.removeItem(LOG_KEY)
+  localStorage.removeItem(AUDIT_KEY)
+  logOutput.textContent = 'Journal local effacé.'
+  storageOutput.textContent = 'Toutes les données locales de cette interface ont été effacées.'
 })
 
 document.addEventListener('click', event => {
