@@ -1,10 +1,13 @@
 const LOG_KEY = 'rgpd-data-journey-audit:local-action-log'
+const SVG_NS = 'http://www.w3.org/2000/svg'
 
 const form = document.querySelector('#audit-form')
 const resetAudit = document.querySelector('#reset-audit')
 const result = document.querySelector('#result')
 const resultContent = document.querySelector('#result-content')
 const gaugeHost = document.querySelector('#gauge-host')
+const ssfHost = document.querySelector('#ssf-host')
+const entityHost = document.querySelector('#entity-host')
 const refreshLog = document.querySelector('#refresh-log')
 const exportLog = document.querySelector('#export-log')
 const clearLog = document.querySelector('#clear-log')
@@ -23,11 +26,11 @@ function writeLog(entries) {
   localStorage.setItem(LOG_KEY, JSON.stringify(entries.slice(-250)))
 }
 
-function safeText(value) {
+function safeText(value, maxLength = 120) {
   return String(value || '')
     .replace(/\s+/g, ' ')
     .trim()
-    .slice(0, 90)
+    .slice(0, maxLength)
 }
 
 function logAction(type, details = {}) {
@@ -53,6 +56,15 @@ function checkboxState(name) {
   return Boolean(item && item.checked)
 }
 
+function fieldValue(name) {
+  const item = form.elements[name]
+  return item ? safeText(item.value, 180) : ''
+}
+
+function normalizeDigits(value) {
+  return String(value || '').replace(/\D+/g, '')
+}
+
 function card(title, body) {
   const node = document.createElement('article')
   node.className = 'card'
@@ -64,8 +76,144 @@ function card(title, body) {
   return node
 }
 
+function makeBadge(status) {
+  const badge = document.createElement('span')
+  badge.className = `status-badge ${status.toLowerCase()}`
+  badge.textContent = status
+  return badge
+}
+
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value))
+}
+
+function ssfStatus({ present, invalid = false, contradicted = false, confirmed = false }) {
+  if (contradicted || invalid) return 'UNSAT'
+  if (present && confirmed) return 'SAT'
+  return 'UNKNOWN'
+}
+
+function ssfNote(status, sat, unsat, unknown) {
+  if (status === 'SAT') return sat
+  if (status === 'UNSAT') return unsat
+  return unknown
+}
+
+function buildEntityRows(data) {
+  const sirenDigits = normalizeDigits(data.siren)
+  const siretDigits = normalizeDigits(data.siret)
+  const sirenInvalid = Boolean(data.siren && sirenDigits.length !== 9)
+  const siretInvalid = Boolean(data.siret && siretDigits.length !== 14)
+
+  const rows = [
+    {
+      key: 'entityName',
+      label: 'Dénomination / entité affichée',
+      value: data.entityName,
+      location: data.entityLocation,
+      source: data.officialSource,
+      status: ssfStatus({
+        present: Boolean(data.entityName || data.entityIdentified),
+        contradicted: data.entityMismatch,
+        confirmed: data.registryMatch
+      })
+    },
+    {
+      key: 'legalForm',
+      label: 'Forme juridique',
+      value: data.legalForm,
+      location: data.entityLocation,
+      source: data.officialSource,
+      status: ssfStatus({
+        present: Boolean(data.legalForm),
+        contradicted: data.entityMismatch,
+        confirmed: data.registryMatch
+      })
+    },
+    {
+      key: 'siren',
+      label: 'SIREN',
+      value: data.siren,
+      location: data.sirenLocation,
+      source: data.officialSource,
+      status: ssfStatus({
+        present: Boolean(data.siren),
+        invalid: sirenInvalid,
+        contradicted: data.entityMismatch,
+        confirmed: data.registryMatch
+      })
+    },
+    {
+      key: 'siret',
+      label: 'SIRET',
+      value: data.siret,
+      location: data.siretLocation,
+      source: data.officialSource,
+      status: ssfStatus({
+        present: Boolean(data.siret),
+        invalid: siretInvalid,
+        contradicted: data.entityMismatch,
+        confirmed: data.registryMatch
+      })
+    },
+    {
+      key: 'address',
+      label: 'Adresse déclarée',
+      value: data.entityAddress,
+      location: data.addressLocation,
+      source: data.officialSource,
+      status: ssfStatus({
+        present: Boolean(data.entityAddress),
+        contradicted: data.entityMismatch,
+        confirmed: data.registryMatch
+      })
+    },
+    {
+      key: 'rights',
+      label: 'Droits RGPD / contact',
+      value: data.rightsContact ? 'Moyen d’exercice des droits trouvé' : '',
+      location: data.rightsLocation,
+      source: 'Site audité',
+      status: ssfStatus({
+        present: Boolean(data.rightsContact),
+        confirmed: Boolean(data.rightsContact && data.rightsLocation)
+      })
+    },
+    {
+      key: 'payment',
+      label: 'Destinataire économique / paiement',
+      value: data.paymentThirdParty ? 'Différent ou incohérent selon lecture utilisateur' : 'Non signalé comme différent',
+      location: 'Parcours d’achat / paiement / CGV',
+      source: 'Observation utilisateur',
+      status: data.paymentThirdParty ? 'UNSAT' : 'UNKNOWN'
+    }
+  ]
+
+  return rows.map(row => ({
+    ...row,
+    value: row.value || 'Non renseigné',
+    location: row.location || 'Emplacement non renseigné',
+    source: row.source || 'Source externe non renseignée',
+    note: ssfNote(
+      row.status,
+      'Cohérent selon les éléments renseignés et la vérification déclarée.',
+      'Incohérent, invalide ou contradictoire selon les éléments renseignés.',
+      'Absent, non localisé ou insuffisamment vérifié.'
+    )
+  }))
+}
+
+function summarizeSsf(rows) {
+  const counts = rows.reduce((acc, row) => {
+    acc[row.status] = (acc[row.status] || 0) + 1
+    return acc
+  }, { SAT: 0, UNSAT: 0, UNKNOWN: 0 })
+
+  return {
+    sat: counts.SAT || 0,
+    unsat: counts.UNSAT || 0,
+    unknown: counts.UNKNOWN || 0
+  }
 }
 
 function gaugeLabel(score) {
@@ -92,43 +240,44 @@ function gaugeLabel(score) {
   }
 }
 
-function buildGauge(data) {
-  let score = 20
+function buildGauge(data, entityRows) {
+  let score = 18
   const reasons = []
   const positive = []
+  const ssf = summarizeSsf(entityRows)
 
   if (data.legalNotice) positive.push('Mentions légales trouvées.')
   else {
-    score += 15
+    score += 13
     reasons.push('Mentions légales absentes ou non vérifiées.')
   }
 
   if (data.privacyPolicy) positive.push('Politique de confidentialité trouvée.')
   else {
-    score += 15
+    score += 13
     reasons.push('Politique de confidentialité absente ou non vérifiée.')
   }
 
   if (data.rightsContact) positive.push('Moyen d’exercice des droits trouvé.')
   else {
-    score += 12
+    score += 10
     reasons.push('Aucun moyen clair d’exercer les droits n’est indiqué.')
   }
 
   if (data.cookiesInfo) positive.push('Information cookies / traceurs trouvée.')
   else {
-    score += 8
+    score += 7
     reasons.push('Information cookies / traceurs absente ou insuffisamment visible.')
   }
 
-  if (data.entityIdentified) positive.push('Entité réelle déclarée sur le site.')
+  if (data.entityName || data.entityIdentified) positive.push('Entité réelle déclarée sur le site.')
   else {
-    score += 18
+    score += 16
     reasons.push('Aucune société, association ou entité réelle clairement identifiée.')
   }
 
   if (data.registryMatch) {
-    score -= 10
+    score -= 12
     positive.push('Entité indiquée comme vérifiable dans un registre officiel.')
   } else {
     score += 10
@@ -136,13 +285,23 @@ function buildGauge(data) {
   }
 
   if (data.entityMismatch) {
-    score += 35
+    score += 34
     reasons.push('Incohérence déclarée entre site, société, SIREN/SIRET, adresse ou registre.')
   }
 
   if (data.paymentThirdParty) {
-    score += 30
+    score += 28
     reasons.push('Paiement ou destinataire économique déclaré comme différent de l’entité affichée.')
+  }
+
+  if (ssf.unsat > 0) {
+    score += ssf.unsat * 9
+    reasons.push(`${ssf.unsat} point(s) SSF-IRS en UNSAT.`)
+  }
+
+  if (ssf.unknown > 0) {
+    score += Math.min(18, ssf.unknown * 3)
+    reasons.push(`${ssf.unknown} point(s) SSF-IRS en UNKNOWN.`)
   }
 
   if (data.localStorageObserved && !data.cookiesInfo) {
@@ -158,13 +317,13 @@ function buildGauge(data) {
 
   if (data.retentionInfo) positive.push('Durées de conservation indiquées.')
   else {
-    score += 8
+    score += 7
     reasons.push('Durées de conservation non identifiées.')
   }
 
   if (data.legalBasisInfo) positive.push('Bases juridiques indiquées.')
   else {
-    score += 8
+    score += 7
     reasons.push('Bases juridiques non identifiées.')
   }
 
@@ -173,10 +332,12 @@ function buildGauge(data) {
 
   return {
     score: finalScore,
-    angle: -90 + (finalScore * 1.8),
+    percent: `${finalScore}%`,
+    needleDegrees: 180 - (finalScore * 1.8),
     ...label,
     reasons,
-    positive
+    positive,
+    ssf
   }
 }
 
@@ -190,7 +351,7 @@ function buildReading(data, gauge) {
   if (!data.privacyPolicy) missing.push('Politique de confidentialité à rechercher ou vérifier.')
   if (!data.cookiesInfo) unclear.push('Absence ou visibilité insuffisante de l’information cookies / traceurs.')
   if (!data.rightsContact) missing.push('Moyen concret d’exercice des droits à identifier.')
-  if (!data.entityIdentified) missing.push('Société, association ou organisme responsable à identifier.')
+  if (!data.entityName && !data.entityIdentified) missing.push('Société, association ou organisme responsable à identifier.')
   if (!data.registryMatch) unclear.push('Rattachement à un registre officiel à vérifier.')
   if (!data.retentionInfo) missing.push('Durées de conservation non identifiées.')
   if (!data.legalBasisInfo) missing.push('Bases juridiques non identifiées.')
@@ -208,6 +369,7 @@ function buildReading(data, gauge) {
 
   actions.push('Comparer mentions légales, confidentialité, cookies et fonctionnement observable.')
   actions.push('Vérifier l’entité déclarée dans une source officielle lorsque cette information est disponible.')
+  actions.push('Contrôler où chaque donnée est affichée sur le site : footer, mentions légales, confidentialité, CGV, contact ou paiement.')
   actions.push('Conserver les captures ou liens utiles avant toute démarche.')
 
   return {
@@ -218,6 +380,27 @@ function buildReading(data, gauge) {
   }
 }
 
+function svgEl(name, attributes = {}) {
+  const node = document.createElementNS(SVG_NS, name)
+  Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, String(value)))
+  return node
+}
+
+function polarPoint(cx, cy, radius, degrees) {
+  const radians = degrees * Math.PI / 180
+  return {
+    x: cx + Math.cos(radians) * radius,
+    y: cy - Math.sin(radians) * radius
+  }
+}
+
+function arcPath(cx, cy, radius, startDeg, endDeg) {
+  const start = polarPoint(cx, cy, radius, startDeg)
+  const end = polarPoint(cx, cy, radius, endDeg)
+  const largeArc = Math.abs(endDeg - startDeg) > 180 ? 1 : 0
+  return `M ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${radius} ${radius} 0 ${largeArc} 1 ${end.x.toFixed(2)} ${end.y.toFixed(2)}`
+}
+
 function renderGauge(gauge) {
   gaugeHost.innerHTML = ''
 
@@ -226,16 +409,46 @@ function renderGauge(gauge) {
   wrapper.setAttribute('aria-label', 'Compteur de vigilance documentaire')
 
   const visual = document.createElement('div')
-  visual.className = 'gauge'
-  visual.style.setProperty('--needle-angle', `${gauge.angle}deg`)
+  visual.className = 'gauge-visual'
 
-  const needle = document.createElement('div')
-  needle.className = 'gauge-needle'
+  const svg = svgEl('svg', {
+    viewBox: '0 0 240 150',
+    role: 'img',
+    'aria-label': `Compteur de vigilance : ${gauge.percent}, ${gauge.title}`
+  })
 
-  const hub = document.createElement('div')
-  hub.className = 'gauge-hub'
+  svg.append(
+    svgEl('path', { class: 'gauge-track', d: arcPath(120, 118, 92, 180, 0) }),
+    svgEl('path', { class: 'gauge-arc gauge-arc-green', d: arcPath(120, 118, 92, 180, 120) }),
+    svgEl('path', { class: 'gauge-arc gauge-arc-yellow', d: arcPath(120, 118, 92, 120, 60) }),
+    svgEl('path', { class: 'gauge-arc gauge-arc-red', d: arcPath(120, 118, 92, 60, 0) })
+  )
 
-  visual.append(needle, hub)
+  const needleEnd = polarPoint(120, 118, 78, gauge.needleDegrees)
+  svg.append(
+    svgEl('line', {
+      class: 'gauge-needle',
+      x1: 120,
+      y1: 118,
+      x2: needleEnd.x.toFixed(2),
+      y2: needleEnd.y.toFixed(2)
+    }),
+    svgEl('circle', { class: 'gauge-hub', cx: 120, cy: 118, r: 9 }),
+    svgEl('text', { class: 'gauge-text gauge-text-left', x: 35, y: 138 }),
+    svgEl('text', { class: 'gauge-text gauge-text-mid', x: 120, y: 34 }),
+    svgEl('text', { class: 'gauge-text gauge-text-right', x: 205, y: 138 })
+  )
+
+  const labels = svg.querySelectorAll('text')
+  labels[0].textContent = 'Vert'
+  labels[1].textContent = 'Jaune'
+  labels[2].textContent = 'Rouge'
+
+  const scorePill = document.createElement('div')
+  scorePill.className = 'gauge-score-pill'
+  scorePill.textContent = gauge.percent
+
+  visual.append(svg, scorePill)
 
   const label = document.createElement('div')
   label.className = 'gauge-label'
@@ -244,20 +457,106 @@ function renderGauge(gauge) {
   title.textContent = gauge.title
 
   const score = document.createElement('span')
-  score.textContent = `${gauge.score}/100`
+  score.textContent = `Indice : ${gauge.percent}`
 
   const text = document.createElement('p')
   text.textContent = gauge.explanation
 
+  const ssf = document.createElement('p')
+  ssf.className = 'muted'
+  ssf.textContent = `Pré-validation SSF-IRS : ${gauge.ssf.sat} SAT · ${gauge.ssf.unsat} UNSAT · ${gauge.ssf.unknown} UNKNOWN.`
+
   const reasons = document.createElement('p')
   reasons.className = 'muted'
   reasons.textContent = gauge.reasons.length
-    ? `Pourquoi cette position : ${gauge.reasons.slice(0, 4).join(' ')}`
+    ? `Pourquoi cette position : ${gauge.reasons.slice(0, 5).join(' ')}`
     : 'Pourquoi cette position : les principaux éléments déclarés sont cohérents dans cette lecture locale.'
 
-  label.append(title, score, text, reasons)
+  label.append(title, score, text, ssf, reasons)
   wrapper.append(visual, label)
   gaugeHost.append(wrapper)
+}
+
+function renderSsfSummary(rows) {
+  ssfHost.innerHTML = ''
+  const summary = summarizeSsf(rows)
+  const panel = document.createElement('section')
+  panel.className = 'ssf-panel'
+
+  const title = document.createElement('h3')
+  title.textContent = 'Pré-validation SSF-IRS'
+
+  const intro = document.createElement('p')
+  intro.className = 'muted'
+  intro.textContent = 'Avant affichage interprété, les informations renseignées passent par une lecture publique SAT / UNSAT / UNKNOWN.'
+
+  const badges = document.createElement('div')
+  badges.className = 'status-row'
+
+  const sat = document.createElement('span')
+  sat.className = 'status-count sat'
+  sat.textContent = `${summary.sat} SAT`
+
+  const unsat = document.createElement('span')
+  unsat.className = 'status-count unsat'
+  unsat.textContent = `${summary.unsat} UNSAT`
+
+  const unknown = document.createElement('span')
+  unknown.className = 'status-count unknown'
+  unknown.textContent = `${summary.unknown} UNKNOWN`
+
+  badges.append(sat, unsat, unknown)
+  panel.append(title, intro, badges)
+  ssfHost.append(panel)
+}
+
+function renderEntityPanel(rows) {
+  entityHost.innerHTML = ''
+
+  const section = document.createElement('section')
+  section.className = 'entity-panel'
+
+  const title = document.createElement('h3')
+  title.textContent = 'Entité identifiée / société rattachée'
+
+  const intro = document.createElement('p')
+  intro.className = 'muted'
+  intro.textContent = 'Chaque information est affichée avec sa valeur, son emplacement sur le site audité, la source externe déclarée et son statut SSF-IRS.'
+
+  const tableWrap = document.createElement('div')
+  tableWrap.className = 'table-wrap'
+
+  const table = document.createElement('table')
+  const thead = document.createElement('thead')
+  const headerRow = document.createElement('tr')
+  ;['Donnée', 'Valeur', 'Où sur le site', 'Source externe', 'SSF-IRS', 'Lecture'].forEach(label => {
+    const th = document.createElement('th')
+    th.textContent = label
+    headerRow.append(th)
+  })
+  thead.append(headerRow)
+
+  const tbody = document.createElement('tbody')
+  rows.forEach(row => {
+    const tr = document.createElement('tr')
+    const cells = [row.label, row.value, row.location, row.source]
+    cells.forEach(value => {
+      const td = document.createElement('td')
+      td.textContent = value
+      tr.append(td)
+    })
+    const statusCell = document.createElement('td')
+    statusCell.append(makeBadge(row.status))
+    const noteCell = document.createElement('td')
+    noteCell.textContent = row.note
+    tr.append(statusCell, noteCell)
+    tbody.append(tr)
+  })
+
+  table.append(thead, tbody)
+  tableWrap.append(table)
+  section.append(title, intro, tableWrap)
+  entityHost.append(section)
 }
 
 function renderReading(reading, target) {
@@ -287,20 +586,55 @@ form.addEventListener('submit', event => {
     localStorageObserved: checkboxState('local-storage-observed'),
     externalServices: checkboxState('external-services'),
     retentionInfo: checkboxState('retention-info'),
-    legalBasisInfo: checkboxState('legal-basis-info')
+    legalBasisInfo: checkboxState('legal-basis-info'),
+    entityName: fieldValue('entity-name'),
+    legalForm: fieldValue('legal-form'),
+    siren: fieldValue('siren'),
+    siret: fieldValue('siret'),
+    entityAddress: fieldValue('entity-address'),
+    officialSource: fieldValue('official-source'),
+    entityLocation: fieldValue('entity-location'),
+    sirenLocation: fieldValue('siren-location'),
+    siretLocation: fieldValue('siret-location'),
+    addressLocation: fieldValue('address-location'),
+    rightsLocation: fieldValue('rights-location')
   }
-  const gauge = buildGauge(data)
+  const entityRows = buildEntityRows(data)
+  const gauge = buildGauge(data, entityRows)
   const reading = buildReading(data, gauge)
   renderGauge(gauge)
+  renderSsfSummary(entityRows)
+  renderEntityPanel(entityRows)
   renderReading(reading, target)
   logAction('audit:local-reading-generated', {
     targetProvided: Boolean(target),
     target: target || null,
-    checks: data,
+    checks: {
+      legalNotice: data.legalNotice,
+      privacyPolicy: data.privacyPolicy,
+      cookiesInfo: data.cookiesInfo,
+      rightsContact: data.rightsContact,
+      entityIdentified: data.entityIdentified,
+      registryMatch: data.registryMatch,
+      entityMismatch: data.entityMismatch,
+      paymentThirdParty: data.paymentThirdParty,
+      localStorageObserved: data.localStorageObserved,
+      externalServices: data.externalServices,
+      retentionInfo: data.retentionInfo,
+      legalBasisInfo: data.legalBasisInfo
+    },
+    entity: {
+      entityName: data.entityName || null,
+      legalForm: data.legalForm || null,
+      sirenProvided: Boolean(data.siren),
+      siretProvided: Boolean(data.siret),
+      officialSource: data.officialSource || null
+    },
     vigilance: {
       score: gauge.score,
       zone: gauge.zone,
-      title: gauge.title
+      title: gauge.title,
+      ssf: gauge.ssf
     }
   })
 })
@@ -309,6 +643,8 @@ resetAudit.addEventListener('click', () => {
   form.reset()
   result.hidden = true
   gaugeHost.innerHTML = ''
+  ssfHost.innerHTML = ''
+  entityHost.innerHTML = ''
   logAction('audit:form-reset')
 })
 
