@@ -1,12 +1,12 @@
 # RGPD Data Journey Audit
 
-Outil public minimal d'audit RGPD orienté parcours des données, droits applicables, cohérence documentaire, entité réelle, traces locales et vigilance visuelle.
+Outil public minimal d'audit RGPD orienté parcours des données, droits applicables, cohérence documentaire, entité réelle, traces locales, préremplissage automatique et vigilance visuelle.
 
 Ce dépôt porte une couche publique issue du projet **Association droits aux données personnelles RGPD**. Son objectif est de rendre compréhensible, pour un non-spécialiste, la manière dont un site, une interface ou un service numérique présente ses traitements de données, ses mentions légales, sa politique de confidentialité, ses traceurs éventuels, ses stockages locaux, son rattachement à une entité réelle et les droits applicables.
 
 ## Principe directeur
 
-Comprendre un résultat ne suffit pas. Il faut aussi comprendre quelles données permettent de produire ce résultat, où elles circulent, qui peut les traiter, pourquoi, pendant combien de temps, ce qui reste dans le navigateur, et comment agir.
+Comprendre un résultat ne suffit pas. Il faut aussi comprendre quelles données permettent de produire ce résultat, où elles circulent, qui peut les traiter, pourquoi, pendant combien de temps, ce qui reste dans le navigateur, ce qui est récupéré volontairement, et comment agir.
 
 ```text
 DOMAIN_RESULT
@@ -18,12 +18,14 @@ DATA_RIGHTS
 PUBLIC_UNDERSTANDING
 ```
 
-Extension site / société / trace locale :
+Extension site / société / trace locale / récupération :
 
 ```text
 SITE_RESULT
 +
 LEGAL_ENTITY
++
+USER_TRIGGERED_FETCH
 +
 SSF-IRS
 +
@@ -55,7 +57,8 @@ Ce dépôt vise à construire une interface publique permettant à l'utilisateur
 13. quels droits RGPD sont présentés ;
 14. comment exercer concrètement ces droits ;
 15. quelles traces locales cette interface écrit dans le navigateur ;
-16. quelles incohérences, absences ou ambiguïtés apparaissent entre mentions légales, politique de confidentialité, cookies, traceurs, stockage local, entité déclarée et fonctionnement observable.
+16. quelles requêtes externes sont lancées volontairement par l'utilisateur ;
+17. quelles incohérences, absences ou ambiguïtés apparaissent entre mentions légales, politique de confidentialité, cookies, traceurs, stockage local, entité déclarée et fonctionnement observable.
 
 ## Périmètre public
 
@@ -68,6 +71,7 @@ Le dépôt contient uniquement la couche publique nécessaire à :
 - la restitution pédagogique des droits ;
 - la restitution d'un niveau de vigilance documentaire ;
 - l'explication des traces locales écrites dans le navigateur ;
+- le préremplissage volontaire des données société lorsque les sources sont lisibles ;
 - la documentation minimale de fonctionnement.
 
 Le dépôt ne contient pas :
@@ -96,7 +100,7 @@ La couche publique expose uniquement ce qui est nécessaire pour que l'utilisate
 
 ### Audit d'un site
 
-L'utilisateur peut renseigner l'adresse d'un site ou analyser manuellement une interface afin d'obtenir une lecture structurée :
+L'utilisateur peut renseigner l'adresse d'un site, lancer une récupération volontaire ou analyser manuellement une interface afin d'obtenir une lecture structurée :
 
 - mentions légales présentes ou absentes ;
 - politique de confidentialité présente ou absente ;
@@ -112,9 +116,28 @@ L'utilisateur peut renseigner l'adresse d'un site ou analyser manuellement une i
 - moyens de contact ;
 - zones floues ou contradictoires.
 
+### Récupération automatique volontaire
+
+La version publique v0.2 ajoute un module de préremplissage :
+
+```text
+URL SAISIE
+→ ACTION UTILISATEUR
+→ FETCH HTML SI CORS AUTORISE
+→ EXTRACTION SIREN / SIRET / ADRESSE / LIENS UTILES
+→ API RECHERCHE D'ENTREPRISES SI POSSIBLE
+→ PRÉREMPLISSAGE DES CHAMPS
+→ SSF-IRS
+→ COMPTEUR RECALCULÉ
+```
+
+Le préremplissage ne remplace pas le contrôle utilisateur. Les champs restent modifiables.
+
+Si le site empêche la lecture depuis le navigateur, l'interface affiche l'échec et conserve le mode manuel.
+
 ### Validation SSF-IRS publique
 
-Avant affichage interprété, les informations renseignées passent par une validation publique simple :
+Avant affichage interprété, les informations renseignées ou préremplies passent par une validation publique simple :
 
 ```text
 OBSERVED_DATA
@@ -180,7 +203,7 @@ rgpd-data-journey-audit:local-action-log
 rgpd-data-journey-audit:last-local-audit
 ```
 
-La première clé conserve le journal des actions utiles : clics, affichage du journal, génération d'audit, export, restauration ou effacement.
+La première clé conserve le journal des actions utiles : clics, affichage du journal, génération d'audit, export, restauration, préremplissage automatique ou effacement.
 
 La seconde clé conserve le dernier audit local afin de permettre à l'utilisateur de le revoir ou de le restaurer.
 
@@ -209,6 +232,7 @@ Ce qui semble incohérent
 Ce qui reste à vérifier
 Ce que l'utilisateur peut faire
 Ce qui reste localement dans le navigateur
+Ce qui a été récupéré volontairement
 ```
 
 ## Domaines d'application initiaux
@@ -244,6 +268,8 @@ donnée manipulée
 +
 emplacement sur le site
 +
+récupération volontaire
++
 pré-validation SSF-IRS
 +
 trace locale visible
@@ -270,6 +296,7 @@ Toute valorisation d'algorithmes, d'outils ou de technologies auprès d'entrepri
 - `docs/DATA_JOURNEY_MODEL.md` — modèle public de parcours des données ;
 - `docs/LOCAL_ACTION_JOURNAL.md` — journal local navigateur ;
 - `docs/USER_LOCAL_STORAGE_EXPLANATION.md` — explication utilisateur du carnet local ;
+- `docs/AUTOMATIC_SITE_ENTITY_FETCH.md` — récupération volontaire URL / site / API ;
 - `docs/PRIVACY_READABILITY_REFERENCE.md` — référence de lisibilité ;
 - `docs/PUBLIC_BOUNDARY.md` — frontière de publication ;
 - `docs/SITE_AUDIT_SCOPE.md` — périmètre de l'audit ;
