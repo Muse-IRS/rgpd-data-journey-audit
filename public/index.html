@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Audit RGPD minimal orienté parcours des données, droits, cohérence documentaire et compteur de vigilance.">
+  <meta name="description" content="Audit RGPD minimal orienté parcours des données, droits, cohérence documentaire, entité réelle et compteur de vigilance.">
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:; base-uri 'self'; form-action 'self'">
   <title>RGPD Data Journey Audit</title>
@@ -11,7 +11,7 @@
 </head>
 <body>
   <header class="hero">
-    <div class="shell">
+    <div class="shell hero-inner">
       <p class="eyebrow">Association RGPD · Data Journey</p>
       <h1>Comprendre où vont les données.</h1>
       <p class="lead">Outil public minimal pour lire un site, une interface ou un service numérique sous l'angle : résultat, parcours des données, droits applicables, entité réelle et vigilance documentaire.</p>
@@ -19,6 +19,8 @@
         <span>SITE_RESULT</span>
         <span>+</span>
         <span>LEGAL_ENTITY</span>
+        <span>+</span>
+        <span>SSF-IRS</span>
         <span>+</span>
         <span>DATA_JOURNEY</span>
         <span>+</span>
@@ -39,8 +41,9 @@
         <li>mentions légales ;</li>
         <li>politique de confidentialité ;</li>
         <li>cookies, traceurs et stockage local ;</li>
-        <li>entité réelle déclarée et cohérence apparente avec un registre officiel ;</li>
-        <li>acteurs et destinataires déclarés ;</li>
+        <li>entité réelle déclarée, SIREN, SIRET, adresse et source externe ;</li>
+        <li>emplacement exact des informations sur le site audité ;</li>
+        <li>validation publique SSF-IRS : SAT, UNSAT, UNKNOWN ;</li>
         <li>droits RGPD et moyens de contact ;</li>
         <li>cohérence entre les documents et le fonctionnement observable.</li>
       </ul>
@@ -50,7 +53,7 @@
       <h2>Audit déclaratif minimal</h2>
       <p class="muted">Cette version ne visite pas automatiquement le site renseigné. Elle construit une lecture locale à partir des éléments observés ou indiqués par l'utilisateur.</p>
       <form id="audit-form">
-        <div class="field">
+        <div class="field full">
           <label for="target-url">Site ou interface auditée</label>
           <input id="target-url" name="target-url" type="url" inputmode="url" placeholder="https://example.org" autocomplete="off">
           <span class="help">L'adresse reste locale dans cette version. L'utilisateur peut effacer le journal à tout moment.</span>
@@ -58,26 +61,90 @@
 
         <fieldset>
           <legend>Documents visibles</legend>
-          <label><input type="checkbox" name="legal-notice"> Mentions légales trouvées</label>
-          <label><input type="checkbox" name="privacy-policy"> Politique de confidentialité trouvée</label>
-          <label><input type="checkbox" name="cookies-info"> Information cookies / traceurs trouvée</label>
-          <label><input type="checkbox" name="rights-contact"> Moyen d'exercer les droits trouvé</label>
+          <div class="check-grid">
+            <label><input type="checkbox" name="legal-notice"> Mentions légales trouvées</label>
+            <label><input type="checkbox" name="privacy-policy"> Politique de confidentialité trouvée</label>
+            <label><input type="checkbox" name="cookies-info"> Information cookies / traceurs trouvée</label>
+            <label><input type="checkbox" name="rights-contact"> Moyen d'exercer les droits trouvé</label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Informations société déclarées</legend>
+          <p class="muted">Ces champs rendent visibles les informations couplées au site. Chaque donnée doit être reliée à son emplacement sur le site et, lorsque possible, à une source externe.</p>
+          <div class="form-grid">
+            <div class="field">
+              <label for="entity-name">Dénomination / entité affichée</label>
+              <input id="entity-name" name="entity-name" type="text" placeholder="Nom de société, association, organisme..." autocomplete="off">
+            </div>
+            <div class="field">
+              <label for="legal-form">Forme juridique</label>
+              <input id="legal-form" name="legal-form" type="text" placeholder="SAS, SARL, EI, association..." autocomplete="off">
+            </div>
+            <div class="field">
+              <label for="siren">SIREN</label>
+              <input id="siren" name="siren" type="text" inputmode="numeric" placeholder="9 chiffres" autocomplete="off">
+            </div>
+            <div class="field">
+              <label for="siret">SIRET</label>
+              <input id="siret" name="siret" type="text" inputmode="numeric" placeholder="14 chiffres" autocomplete="off">
+            </div>
+            <div class="field full">
+              <label for="entity-address">Adresse déclarée</label>
+              <input id="entity-address" name="entity-address" type="text" placeholder="Adresse indiquée dans les mentions légales ou sur le site" autocomplete="off">
+            </div>
+            <div class="field full">
+              <label for="official-source">Source externe consultée ou à consulter</label>
+              <input id="official-source" name="official-source" type="text" placeholder="Annuaire Entreprises, Sirene, RNE, Pappers, autre..." autocomplete="off">
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Où ces informations sont situées sur le site</legend>
+          <p class="muted">Une donnée sans emplacement est incomplète. Indiquer la page ou zone où elle apparaît : mentions légales, footer, confidentialité, CGV, contact, paiement, autre.</p>
+          <div class="form-grid">
+            <div class="field">
+              <label for="entity-location">Emplacement de l'entité</label>
+              <input id="entity-location" name="entity-location" type="text" placeholder="Mentions légales, footer..." autocomplete="off">
+            </div>
+            <div class="field">
+              <label for="siren-location">Emplacement du SIREN</label>
+              <input id="siren-location" name="siren-location" type="text" placeholder="Mentions légales, CGV..." autocomplete="off">
+            </div>
+            <div class="field">
+              <label for="siret-location">Emplacement du SIRET</label>
+              <input id="siret-location" name="siret-location" type="text" placeholder="Mentions légales, facture..." autocomplete="off">
+            </div>
+            <div class="field">
+              <label for="address-location">Emplacement de l'adresse</label>
+              <input id="address-location" name="address-location" type="text" placeholder="Contact, mentions légales..." autocomplete="off">
+            </div>
+            <div class="field full">
+              <label for="rights-location">Emplacement des droits RGPD</label>
+              <input id="rights-location" name="rights-location" type="text" placeholder="Politique de confidentialité, formulaire, DPO..." autocomplete="off">
+            </div>
+          </div>
         </fieldset>
 
         <fieldset>
           <legend>Entité réelle et cohérence société</legend>
-          <label><input type="checkbox" name="entity-identified"> Société, association ou organisme identifié dans les pages du site</label>
-          <label><input type="checkbox" name="registry-match"> Entité retrouvée ou indiquée comme vérifiable dans un registre officiel</label>
-          <label><input type="checkbox" name="entity-mismatch"> Incohérence déclarée entre nom du site, société, SIREN/SIRET, adresse ou registre</label>
-          <label><input type="checkbox" name="payment-third-party"> Paiement ou destinataire économique différent de l'entité affichée</label>
+          <div class="check-grid">
+            <label><input type="checkbox" name="entity-identified"> Société, association ou organisme identifié dans les pages du site</label>
+            <label><input type="checkbox" name="registry-match"> Entité retrouvée ou indiquée comme vérifiable dans un registre officiel</label>
+            <label><input type="checkbox" name="entity-mismatch"> Incohérence déclarée entre nom du site, société, SIREN/SIRET, adresse ou registre</label>
+            <label><input type="checkbox" name="payment-third-party"> Paiement ou destinataire économique différent de l'entité affichée</label>
+          </div>
         </fieldset>
 
         <fieldset>
           <legend>Fonctionnement observable</legend>
-          <label><input type="checkbox" name="local-storage-observed"> Stockage local observé ou annoncé</label>
-          <label><input type="checkbox" name="external-services"> Services externes mentionnés</label>
-          <label><input type="checkbox" name="retention-info"> Durées de conservation indiquées</label>
-          <label><input type="checkbox" name="legal-basis-info"> Bases juridiques indiquées</label>
+          <div class="check-grid">
+            <label><input type="checkbox" name="local-storage-observed"> Stockage local observé ou annoncé</label>
+            <label><input type="checkbox" name="external-services"> Services externes mentionnés</label>
+            <label><input type="checkbox" name="retention-info"> Durées de conservation indiquées</label>
+            <label><input type="checkbox" name="legal-basis-info"> Bases juridiques indiquées</label>
+          </div>
         </fieldset>
 
         <div class="actions">
@@ -91,6 +158,8 @@
       <p class="eyebrow">Restitution locale</p>
       <h2>Lecture simple</h2>
       <div id="gauge-host"></div>
+      <div id="ssf-host"></div>
+      <div id="entity-host"></div>
       <div id="result-content" class="cards"></div>
     </section>
 
@@ -100,6 +169,7 @@
         <li>Utilisateur</li>
         <li>Action dans l'interface</li>
         <li>Données saisies ou observées</li>
+        <li>Pré-validation SSF-IRS : SAT / UNSAT / UNKNOWN</li>
         <li>Traitement local ou transmission externe</li>
         <li>Entité réelle / responsable déclaré</li>
         <li>Acteurs / destinataires</li>
@@ -123,12 +193,12 @@
 
     <section class="callout" id="limits">
       <h2>Limites</h2>
-      <p>Cette interface ne produit pas de verdict juridique automatique. Elle aide à distinguer les faits observables, les déclarations trouvées, les données manipulées, les zones floues, le niveau de vigilance documentaire et les actions possibles.</p>
+      <p>Cette interface ne produit pas de verdict juridique automatique. Elle aide à distinguer les faits observables, les déclarations trouvées, les données manipulées, leur emplacement, les zones floues, le niveau de vigilance documentaire et les actions possibles.</p>
     </section>
   </main>
 
   <footer class="footer">
-    <div class="shell">
+    <div class="shell footer-inner">
       <span>RGPD Data Journey Audit</span>
       <a href="./privacy.html">Confidentialité</a>
     </div>
