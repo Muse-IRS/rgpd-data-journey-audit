@@ -1,12 +1,12 @@
 # RGPD Data Journey Audit
 
-Outil public minimal d'audit RGPD orienté parcours des données, droits applicables, cohérence documentaire, entité réelle et vigilance visuelle.
+Outil public minimal d'audit RGPD orienté parcours des données, droits applicables, cohérence documentaire, entité réelle, traces locales et vigilance visuelle.
 
 Ce dépôt porte une couche publique issue du projet **Association droits aux données personnelles RGPD**. Son objectif est de rendre compréhensible, pour un non-spécialiste, la manière dont un site, une interface ou un service numérique présente ses traitements de données, ses mentions légales, sa politique de confidentialité, ses traceurs éventuels, ses stockages locaux, son rattachement à une entité réelle et les droits applicables.
 
 ## Principe directeur
 
-Comprendre un résultat ne suffit pas. Il faut aussi comprendre quelles données permettent de produire ce résultat, où elles circulent, qui peut les traiter, pourquoi, pendant combien de temps, et comment agir.
+Comprendre un résultat ne suffit pas. Il faut aussi comprendre quelles données permettent de produire ce résultat, où elles circulent, qui peut les traiter, pourquoi, pendant combien de temps, ce qui reste dans le navigateur, et comment agir.
 
 ```text
 DOMAIN_RESULT
@@ -18,7 +18,7 @@ DATA_RIGHTS
 PUBLIC_UNDERSTANDING
 ```
 
-Extension site / société :
+Extension site / société / trace locale :
 
 ```text
 SITE_RESULT
@@ -27,7 +27,7 @@ LEGAL_ENTITY
 +
 SSF-IRS
 +
-DATA_JOURNEY
+LOCAL_TRACE
 +
 DATA_RIGHTS
 +
@@ -54,7 +54,8 @@ Ce dépôt vise à construire une interface publique permettant à l'utilisateur
 12. quelles durées de conservation sont annoncées ;
 13. quels droits RGPD sont présentés ;
 14. comment exercer concrètement ces droits ;
-15. quelles incohérences, absences ou ambiguïtés apparaissent entre mentions légales, politique de confidentialité, cookies, traceurs, stockage local, entité déclarée et fonctionnement observable.
+15. quelles traces locales cette interface écrit dans le navigateur ;
+16. quelles incohérences, absences ou ambiguïtés apparaissent entre mentions légales, politique de confidentialité, cookies, traceurs, stockage local, entité déclarée et fonctionnement observable.
 
 ## Périmètre public
 
@@ -66,6 +67,7 @@ Le dépôt contient uniquement la couche publique nécessaire à :
 - l'identification des limites ;
 - la restitution pédagogique des droits ;
 - la restitution d'un niveau de vigilance documentaire ;
+- l'explication des traces locales écrites dans le navigateur ;
 - la documentation minimale de fonctionnement.
 
 Le dépôt ne contient pas :
@@ -169,18 +171,32 @@ La couleur ne doit jamais être le seul indicateur : le statut textuel et l'expl
 
 ### Journal local compréhensible
 
-L'interface peut produire un journal local des actions réalisées par l'utilisateur :
+L'interface produit un carnet local du navigateur, visible et contrôlable par l'utilisateur.
 
-- clics sur les sections ;
-- ouverture des panneaux d'explication ;
-- audit lancé ;
-- données saisies ou volontairement indiquées ;
-- résultat produit ;
-- export demandé.
+Elle peut utiliser deux clés locales :
 
-Ce journal doit être visible, compréhensible et contrôlable par l'utilisateur.
+```text
+rgpd-data-journey-audit:local-action-log
+rgpd-data-journey-audit:last-local-audit
+```
 
-Par défaut, ce journal reste dans le navigateur. Aucune transmission à un serveur ne doit être effectuée sans action explicite.
+La première clé conserve le journal des actions utiles : clics, affichage du journal, génération d'audit, export, restauration ou effacement.
+
+La seconde clé conserve le dernier audit local afin de permettre à l'utilisateur de le revoir ou de le restaurer.
+
+Ce carnet local doit être expliqué simplement :
+
+```text
+Ce qui est écrit dans le navigateur.
+Pourquoi cela est écrit.
+Où cela reste.
+Comment l'afficher.
+Comment l'exporter.
+Comment le restaurer.
+Comment l'effacer.
+```
+
+Par défaut, ce carnet reste dans le navigateur. Aucune transmission à un serveur ne doit être effectuée sans action explicite.
 
 ### Restitution simple
 
@@ -192,6 +208,7 @@ Ce qui manque
 Ce qui semble incohérent
 Ce qui reste à vérifier
 Ce que l'utilisateur peut faire
+Ce qui reste localement dans le navigateur
 ```
 
 ## Domaines d'application initiaux
@@ -229,6 +246,8 @@ emplacement sur le site
 +
 pré-validation SSF-IRS
 +
+trace locale visible
++
 parcours possible
 +
 entité déclarée
@@ -250,6 +269,7 @@ Toute valorisation d'algorithmes, d'outils ou de technologies auprès d'entrepri
 
 - `docs/DATA_JOURNEY_MODEL.md` — modèle public de parcours des données ;
 - `docs/LOCAL_ACTION_JOURNAL.md` — journal local navigateur ;
+- `docs/USER_LOCAL_STORAGE_EXPLANATION.md` — explication utilisateur du carnet local ;
 - `docs/PRIVACY_READABILITY_REFERENCE.md` — référence de lisibilité ;
 - `docs/PUBLIC_BOUNDARY.md` — frontière de publication ;
 - `docs/SITE_AUDIT_SCOPE.md` — périmètre de l'audit ;
