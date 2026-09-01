@@ -1,0 +1,50 @@
+name: Validate public boundary
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check required public files
+        run: |
+          test -f README.md
+          test -f LICENSE
+          test -f NOTICE
+          test -f docs/PUBLIC_BOUNDARY.md
+          test -f docs/DATA_JOURNEY_MODEL.md
+          test -f public/index.html
+          test -f public/privacy.html
+          test -f public/assets/app.js
+          test -f public/assets/styles.css
+
+      - name: Check JavaScript syntax
+        run: |
+          node --check public/assets/app.js
+
+      - name: Enforce public repository boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -RniE 'PRIVATE_CASE|PERSONAL_CASE|backtest|private_matrix|research_protocol|credential|secret_key|api_key' . --exclude-dir=.git; then
+            echo 'Private or sensitive implementation marker found in public repository.' >&2
+            exit 1
+          fi
+
+      - name: Reject committed local archives and environment files
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find . -type f \( -name '.env' -o -name '.env.local' -o -name '*.zip' -o -name '*.7z' -o -name '*.rar' \) | grep -q .; then
+            echo 'Environment files or local archives must not be committed.' >&2
+            exit 1
+          fi
