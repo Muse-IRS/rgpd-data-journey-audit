@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Audit RGPD minimal orienté parcours des données, droits, cohérence documentaire, entité réelle et compteur de vigilance.">
+  <meta name="description" content="Audit RGPD minimal orienté parcours des données, droits, cohérence documentaire, entité réelle, stockage local et compteur de vigilance.">
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:; base-uri 'self'; form-action 'self'">
   <title>RGPD Data Journey Audit</title>
@@ -14,7 +14,7 @@
     <div class="shell hero-inner">
       <p class="eyebrow">Association RGPD · Data Journey</p>
       <h1>Comprendre où vont les données.</h1>
-      <p class="lead">Outil public minimal pour lire un site, une interface ou un service numérique sous l'angle : résultat, parcours des données, droits applicables, entité réelle et vigilance documentaire.</p>
+      <p class="lead">Outil public minimal pour lire un site, une interface ou un service numérique sous l'angle : résultat, parcours des données, droits applicables, entité réelle, traces locales et vigilance documentaire.</p>
       <div class="formula" aria-label="Invariant public">
         <span>SITE_RESULT</span>
         <span>+</span>
@@ -22,7 +22,7 @@
         <span>+</span>
         <span>SSF-IRS</span>
         <span>+</span>
-        <span>DATA_JOURNEY</span>
+        <span>LOCAL_TRACE</span>
         <span>+</span>
         <span>DATA_RIGHTS</span>
         <span>+</span>
@@ -36,7 +36,7 @@
   <main class="shell stack">
     <section class="panel" id="scope">
       <h2>Ce que fait cette interface</h2>
-      <p>Elle aide à structurer une lecture simple : ce qui est déclaré, ce qui semble manquer, ce qui reste à vérifier, et ce que l'utilisateur peut faire ensuite.</p>
+      <p>Elle aide à structurer une lecture simple : ce qui est déclaré, ce qui semble manquer, ce qui reste à vérifier, ce qui reste local dans le navigateur, et ce que l'utilisateur peut faire ensuite.</p>
       <ul>
         <li>mentions légales ;</li>
         <li>politique de confidentialité ;</li>
@@ -44,6 +44,7 @@
         <li>entité réelle déclarée, SIREN, SIRET, adresse et source externe ;</li>
         <li>emplacement exact des informations sur le site audité ;</li>
         <li>validation publique SSF-IRS : SAT, UNSAT, UNKNOWN ;</li>
+        <li>journal local visible, exportable, restaurable et effaçable ;</li>
         <li>droits RGPD et moyens de contact ;</li>
         <li>cohérence entre les documents et le fonctionnement observable.</li>
       </ul>
@@ -56,7 +57,7 @@
         <div class="field full">
           <label for="target-url">Site ou interface auditée</label>
           <input id="target-url" name="target-url" type="url" inputmode="url" placeholder="https://example.org" autocomplete="off">
-          <span class="help">L'adresse reste locale dans cette version. L'utilisateur peut effacer le journal à tout moment.</span>
+          <span class="help">L'adresse reste locale dans cette version. L'utilisateur peut afficher, restaurer ou effacer les traces locales.</span>
         </div>
 
         <fieldset>
@@ -170,6 +171,7 @@
         <li>Action dans l'interface</li>
         <li>Données saisies ou observées</li>
         <li>Pré-validation SSF-IRS : SAT / UNSAT / UNKNOWN</li>
+        <li>Trace locale visible dans le navigateur</li>
         <li>Traitement local ou transmission externe</li>
         <li>Entité réelle / responsable déclaré</li>
         <li>Acteurs / destinataires</li>
@@ -182,18 +184,46 @@
 
     <section class="panel" id="local-journal">
       <h2>Journal local des actions</h2>
-      <p>Cette interface enregistre localement les actions utiles dans <code>localStorage</code> afin de montrer à l'utilisateur ce qui se passe dans son navigateur. Ce journal n'est pas transmis à un serveur par cette version.</p>
+      <p>Cette interface tient un carnet local dans le navigateur. Il montre ce que cette page écrit localement : actions utiles, lecture générée, compteur, statuts SSF-IRS et dernier audit restaurable.</p>
+      <p class="muted">Dans cette version, ces éléments ne sont pas transmis automatiquement à un serveur. Ils restent dans ce navigateur jusqu'à effacement par l'utilisateur ou suppression par le navigateur.</p>
+
+      <div class="local-storage-map">
+        <article>
+          <strong>Où ?</strong>
+          <span>Dans le navigateur utilisé, pour cette interface.</span>
+        </article>
+        <article>
+          <strong>Quoi ?</strong>
+          <span>Journal des actions et dernier audit local.</span>
+        </article>
+        <article>
+          <strong>Contrôle</strong>
+          <span>Afficher, exporter, restaurer, effacer.</span>
+        </article>
+      </div>
+
       <div class="actions">
-        <button type="button" id="refresh-log">Afficher / actualiser</button>
+        <button type="button" id="explain-local-storage">Expliquer simplement</button>
+        <button type="button" class="secondary" id="show-local-storage">Voir ce qui est stocké</button>
+        <button type="button" class="secondary" id="restore-last-audit">Restaurer le dernier audit</button>
+        <button type="button" id="refresh-log">Afficher / actualiser le journal</button>
         <button type="button" class="secondary" id="export-log">Exporter JSON</button>
         <button type="button" class="danger" id="clear-log">Effacer le journal local</button>
+        <button type="button" class="danger" id="clear-all-local-data">Effacer toutes les données locales</button>
       </div>
+
+      <div id="local-storage-explanation" class="local-explanation" hidden></div>
+
+      <h3>Journal des actions</h3>
       <pre id="log-output" aria-live="polite">Aucun affichage demandé.</pre>
+
+      <h3>Contenu local de cette interface</h3>
+      <pre id="storage-output" aria-live="polite">Aucun affichage demandé.</pre>
     </section>
 
     <section class="callout" id="limits">
       <h2>Limites</h2>
-      <p>Cette interface ne produit pas de verdict juridique automatique. Elle aide à distinguer les faits observables, les déclarations trouvées, les données manipulées, leur emplacement, les zones floues, le niveau de vigilance documentaire et les actions possibles.</p>
+      <p>Cette interface ne produit pas de verdict juridique automatique. Elle aide à distinguer les faits observables, les déclarations trouvées, les données manipulées, leur emplacement, les traces locales, les zones floues, le niveau de vigilance documentaire et les actions possibles.</p>
     </section>
   </main>
 
