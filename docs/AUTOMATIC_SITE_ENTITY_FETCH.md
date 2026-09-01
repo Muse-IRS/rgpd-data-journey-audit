@@ -1,10 +1,10 @@
 # Automatic Site Entity Fetch
 
-This document defines the public pipeline for automatic company/entity prefill from an audited URL.
+This document defines the public pipeline for company/entity prefill from an audited URL, public search term, public registry link or pasted public result.
 
 ## Purpose
 
-The interface may help the user by pre-filling company/entity fields when information is available from the audited site and from public open sources.
+The interface may help the user by pre-filling company/entity fields when information is available from public open sources.
 
 The feature must remain user-triggered, visible, explainable, reversible and limited to identity data.
 
@@ -42,7 +42,7 @@ The automatic layer may recover or display only what is useful to attach a websi
 - simple administrative status when available;
 - source consulted;
 - request URL;
-- location where the information was found on the audited site.
+- location where the information was found on the audited site or public result.
 
 It must not recover or display financial analysis data:
 
@@ -60,10 +60,10 @@ It must not recover or display financial analysis data:
 
 ```text
 USER_ACTION
-→ BUILD_VISIBLE_REQUESTS
-→ FETCH_SITE_IF_ALLOWED
-→ EXTRACT_PUBLIC_TEXT
-→ FIND_ENTITY_CANDIDATES
+→ BUILD_PUBLIC_LINKS
+→ OPEN_PUBLIC_SOURCE_IF_NEEDED
+→ COPY_VISIBLE_PUBLIC_RESULT
+→ PASTE_IMPORT
 → QUERY_NO_TOKEN_PUBLIC_SOURCE_IF_POSSIBLE
 → DISPLAY_REQUEST_DIAGNOSTIC
 → PREFILL_EDITABLE_FIELDS
@@ -71,41 +71,42 @@ USER_ACTION
 → DISPLAY_EXPLANATION
 ```
 
-## Browser-first limitation
+## Simplified public lookup workflow
 
-The public GitHub Pages interface runs in the user's browser.
+The preferred browser-first workflow is:
 
-GitHub Pages is only the static host of the interface. It is not the audit server, not an intermediary and not a proxy.
+```text
+URL_OR_ENTITY_INPUT
+→ PUBLIC_QUERY_SEED
+→ PUBLIC_LINKS
+→ USER_VISIBLE_RESULT
+→ PASTED_TEXT_IMPORT
+→ MINIMAL_IDENTITY_EXTRACTION
+→ API_RECHERCHE_ENTREPRISES_OPTIONAL_CHECK
+→ SSF-IRS
+```
 
-A browser cannot freely read the HTML of any external website. The target website must allow cross-origin reading through its CORS configuration.
+Accepted public query inputs include:
 
-If the target website does not allow it, the interface must not hide the failure. It must display `UNKNOWN`, expose the attempted request and keep the manual fields available.
+```text
+CAPEVOL
+491567798
+49156779800013
+https://annuaire-entreprises.data.gouv.fr/etablissement/49156779800013
+https://www.pappers.fr/recherche?q=capevol
+pappers/capevol
+```
 
-## Request recovery rule
-
-The user must be able to recover the request even when no data is extracted.
-
-The diagnostic output must show:
-
-- target URL normalized by the interface;
-- exact site request attempted;
-- request method;
-- CORS mode;
-- credentials mode;
-- HTTP status when available;
-- CORS or fetch error when available;
-- public API request URL;
-- public web lookup links;
-- whether account/token/secret is required.
-
-## Public lookup links
+## Public links generated
 
 The interface may generate direct public links for manual verification:
 
 ```text
 API Recherche d’Entreprises
 Annuaire Entreprises
+Annuaire établissement direct when a SIRET is available
 Pappers public web search
+Google → Pappers locator
 ```
 
 These links are built from:
@@ -116,23 +117,42 @@ SIRET → SIREN → entity name → domain hint
 
 Pappers is treated as a public web lookup/enrichment source when consulted without account. The Pappers API is not used in the public front-end because it requires a token.
 
-## Current behavior
+Google is treated only as a locator that helps find a public Pappers page. It is not treated as the registry source of truth.
 
-The module:
+## Browser-first limitation
 
-1. reads the URL entered by the user;
-2. accepts HTTPS URLs only;
-3. builds public source links immediately;
-4. attempts a user-triggered `fetch()` of the target page;
-5. parses returned HTML when the browser is allowed to read it;
-6. detects useful links such as legal notices, privacy policy, cookies information, terms and contact pages;
-7. attempts to read same-origin useful pages when available and allowed;
-8. extracts possible SIREN, SIRET, legal form, entity name and address from visible text;
-9. queries the open API Recherche d'Entreprises when a SIREN, SIRET, entity name or domain hint is available;
-10. displays the exact request diagnostic;
-11. pre-fills the existing manual fields;
-12. regenerates the SSF-IRS reading and the vigilance gauge;
-13. writes a visible local trace in the browser journal.
+The public GitHub Pages interface runs in the user's browser.
+
+GitHub Pages is only the static host of the interface. It is not the audit server, not an intermediary and not a proxy.
+
+A browser cannot freely read the HTML of any external website. The target website must allow cross-origin reading through its CORS configuration.
+
+Therefore the robust iPad-compatible path is not to depend on cross-domain crawling. The robust path is:
+
+```text
+BUILD_PUBLIC_LINKS
+→ USER_OPENS_PUBLIC_RESULT
+→ USER_COPIES_VISIBLE_TEXT
+→ USER_PASTES_TEXT_IN_INTERFACE
+→ LOCAL_EXTRACTION
+```
+
+## Request recovery rule
+
+The user must be able to recover the request even when no data is extracted.
+
+The diagnostic output must show:
+
+- normalized query;
+- query type: SIRET, SIREN, entity name, public URL or domain hint;
+- exact public links built;
+- public API request URL;
+- whether account/token/secret is required;
+- minimal data scope;
+- excluded financial/documentary data;
+- API result count when an API call succeeds;
+- selected registry values when available;
+- editable fields populated by the interface.
 
 ## API used
 
@@ -144,6 +164,42 @@ https://recherche-entreprises.api.gouv.fr/search
 
 The request is visible in the diagnostic output and requires no account, no API key and no token.
 
+## Pasted public result import
+
+The user may paste text copied from:
+
+- Pappers public page;
+- Annuaire Entreprises page;
+- Google search result snippet pointing to Pappers or Annuaire;
+- audited site's legal notices;
+- audited site's footer or contact page.
+
+The interface may extract:
+
+```text
+denomination
+legal form
+SIREN
+SIRET
+address
+NAF/APE or activity wording
+```
+
+Example:
+
+```text
+La société CAPEVOL est une SARL enregistrée sous le numéro SIREN 491 567 798, spécialisée dans le conseil pour les affaires et la gestion.
+```
+
+Expected extraction:
+
+```text
+entityName = CAPEVOL
+legalForm = SARL
+siren = 491567798
+activity = conseil pour les affaires et la gestion
+```
+
 ## SSF-IRS rule
 
 The automatic module must never bypass SSF-IRS.
@@ -153,7 +209,7 @@ EXTRACTED_VALUE
 +
 PUBLIC_SOURCE_VALUE
 +
-LOCATION_ON_SITE
+LOCATION_OR_PUBLIC_RESULT
 +
 REQUEST_DIAGNOSTIC
 +
@@ -166,15 +222,13 @@ SAT / UNSAT / UNKNOWN
 
 The module must display:
 
-- whether the site fetch succeeded or failed;
-- why it failed when blocked;
-- what was extracted;
-- which request was attempted;
+- which request was built;
 - which public lookup links were built;
-- which query was sent to the public registry API;
-- how many results were returned;
+- whether direct API verification succeeded;
+- what was extracted from pasted public text;
 - which minimal identity values were used to prefill the panel;
-- that fields remain editable.
+- that fields remain editable;
+- why CORS may still block direct site reading when attempted.
 
 ## Privacy rule
 
@@ -194,12 +248,12 @@ No account-dependent data.
 
 ## Manual fallback
 
-If automatic reading fails:
+If automatic API verification fails:
 
 ```text
-SITE_FETCH = UNKNOWN
-REQUEST_DIAGNOSTIC = DISPLAYED
 PUBLIC_LOOKUP_LINKS = DISPLAYED
+REQUEST_DIAGNOSTIC = DISPLAYED
+PASTE_IMPORT = ENABLED
 MANUAL_FIELDS = ENABLED
 USER_EXPLANATION = DISPLAYED
 ```
