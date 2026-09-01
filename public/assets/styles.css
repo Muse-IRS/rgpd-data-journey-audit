@@ -8,6 +8,9 @@
   --strong: #10100f;
   --soft: #efefe8;
   --danger: #7a1f1f;
+  --green: #2e7d32;
+  --yellow: #d4a017;
+  --red: #b3261e;
 }
 
 * {
@@ -163,6 +166,102 @@ button.danger {
   border-color: var(--danger);
 }
 
+#gauge-host {
+  margin-bottom: 18px;
+}
+
+.gauge-card {
+  display: grid;
+  grid-template-columns: minmax(220px, 320px) 1fr;
+  gap: 22px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 18px;
+  background: #fff;
+}
+
+.gauge-card.green {
+  border-color: color-mix(in srgb, var(--green) 40%, var(--line));
+}
+
+.gauge-card.yellow {
+  border-color: color-mix(in srgb, var(--yellow) 45%, var(--line));
+}
+
+.gauge-card.red {
+  border-color: color-mix(in srgb, var(--red) 45%, var(--line));
+}
+
+.gauge {
+  position: relative;
+  width: min(100%, 300px);
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
+  border-radius: 300px 300px 0 0;
+  background: conic-gradient(from 270deg at 50% 100%, var(--green) 0deg 60deg, var(--yellow) 60deg 125deg, var(--red) 125deg 180deg, transparent 180deg 360deg);
+  border: 1px solid var(--line);
+}
+
+.gauge::after {
+  content: '';
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: 0;
+  height: 76%;
+  border-radius: 260px 260px 0 0;
+  background: #fff;
+}
+
+.gauge-needle {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: 0;
+  width: 44%;
+  height: 4px;
+  background: var(--strong);
+  transform-origin: left center;
+  transform: rotate(var(--needle-angle));
+  border-radius: 999px;
+}
+
+.gauge-hub {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: 0;
+  width: 18px;
+  height: 18px;
+  background: var(--strong);
+  border: 3px solid #fff;
+  border-radius: 50%;
+  transform: translate(-50%, 50%);
+}
+
+.gauge-label {
+  display: grid;
+  gap: 8px;
+}
+
+.gauge-label strong {
+  font-size: 1.35rem;
+}
+
+.gauge-label span {
+  display: inline-flex;
+  width: fit-content;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-weight: 750;
+}
+
+.gauge-label p {
+  margin: 0;
+}
+
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -208,4 +307,10 @@ pre {
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
+}
+
+@media (max-width: 720px) {
+  .gauge-card {
+    grid-template-columns: 1fr;
+  }
 }
