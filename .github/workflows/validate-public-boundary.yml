@@ -37,7 +37,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if grep -RniE 'PRIVATE_CASE|PERSONAL_CASE|private_matrix|research_protocol|secret_key|api_key|sk-[A-Za-z0-9_-]+' . --exclude-dir=.git; then
+          if grep -RniE 'PRIVATE_CASE|PERSONAL_CASE|private_matrix|research_protocol|secret_key|api_key|sk-[A-Za-z0-9_-]+' . --exclude-dir=.git --exclude='validate-public-boundary.yml'; then
             echo 'Private or sensitive implementation marker found in public repository.' >&2
             exit 1
           fi
