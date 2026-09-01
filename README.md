@@ -1,8 +1,8 @@
 # RGPD Data Journey Audit
 
-Outil public minimal d'audit RGPD orienté parcours des données, droits applicables et cohérence documentaire.
+Outil public minimal d'audit RGPD orienté parcours des données, droits applicables, cohérence documentaire et vigilance visuelle.
 
-Ce dépôt porte une couche publique issue du projet **Association droits aux données personnelles RGPD**. Son objectif est de rendre compréhensible, pour un non-spécialiste, la manière dont un site, une interface ou un service numérique présente ses traitements de données, ses mentions légales, sa politique de confidentialité, ses traceurs éventuels, ses stockages locaux et les droits applicables.
+Ce dépôt porte une couche publique issue du projet **Association droits aux données personnelles RGPD**. Son objectif est de rendre compréhensible, pour un non-spécialiste, la manière dont un site, une interface ou un service numérique présente ses traitements de données, ses mentions légales, sa politique de confidentialité, ses traceurs éventuels, ses stockages locaux, son rattachement à une entité réelle et les droits applicables.
 
 ## Principe directeur
 
@@ -18,6 +18,22 @@ DATA_RIGHTS
 PUBLIC_UNDERSTANDING
 ```
 
+Extension site / société :
+
+```text
+SITE_RESULT
++
+LEGAL_ENTITY
++
+DATA_JOURNEY
++
+DATA_RIGHTS
++
+RISK_SIGNALS
+=
+PUBLIC_UNDERSTANDING
+```
+
 ## Objet du dépôt
 
 Ce dépôt vise à construire une interface publique permettant à l'utilisateur d'auditer un site, une interface ou un service numérique selon une lecture simple :
@@ -28,12 +44,14 @@ Ce dépôt vise à construire une interface publique permettant à l'utilisateur
 4. quelles données restent locales dans le navigateur ;
 5. quelles données quittent effectivement le navigateur ;
 6. quels acteurs ou destinataires sont mentionnés ;
-7. quelles finalités sont déclarées ;
-8. quelles bases juridiques sont indiquées ;
-9. quelles durées de conservation sont annoncées ;
-10. quels droits RGPD sont présentés ;
-11. comment exercer concrètement ces droits ;
-12. quelles incohérences, absences ou ambiguïtés apparaissent entre mentions légales, politique de confidentialité, cookies, traceurs, stockage local et fonctionnement observable.
+7. quelle société, association ou entité réelle est déclarée ;
+8. si cette entité semble rattachable à un registre officiel ;
+9. quelles finalités sont déclarées ;
+10. quelles bases juridiques sont indiquées ;
+11. quelles durées de conservation sont annoncées ;
+12. quels droits RGPD sont présentés ;
+13. comment exercer concrètement ces droits ;
+14. quelles incohérences, absences ou ambiguïtés apparaissent entre mentions légales, politique de confidentialité, cookies, traceurs, stockage local, entité déclarée et fonctionnement observable.
 
 ## Périmètre public
 
@@ -44,6 +62,7 @@ Le dépôt contient uniquement la couche publique nécessaire à :
 - la compréhension du parcours des données ;
 - l'identification des limites ;
 - la restitution pédagogique des droits ;
+- la restitution d'un niveau de vigilance documentaire ;
 - la documentation minimale de fonctionnement.
 
 Le dépôt ne contient pas :
@@ -78,11 +97,35 @@ L'utilisateur peut renseigner l'adresse d'un site ou analyser manuellement une i
 - politique de confidentialité présente ou absente ;
 - page cookies / traceurs présente ou absente ;
 - cohérence entre les documents ;
+- entité réelle déclarée ou non déclarée ;
+- cohérence apparente entre site, société, registre officiel et paiement ;
 - acteurs identifiés ;
 - finalités déclarées ;
 - droits RGPD annoncés ;
 - moyens de contact ;
 - zones floues ou contradictoires.
+
+### Compteur de vigilance
+
+L'interface affiche un compteur visuel inspiré d'un compteur de vitesse :
+
+```text
+vert  -> cohérence observée
+jaune -> vigilance recommandée
+rouge -> alerte documentaire élevée
+```
+
+Ce compteur ne certifie pas qu'un site est fiable, dangereux ou frauduleux. Il indique un niveau de vigilance documentaire à partir des éléments déclarés ou observés.
+
+Le compteur doit toujours être accompagné d'une explication :
+
+```text
+Pourquoi cette position ?
+Ce qui est clair.
+Ce qui manque.
+Ce qui reste flou.
+Ce que l'utilisateur peut faire.
+```
 
 ### Journal local compréhensible
 
@@ -119,7 +162,9 @@ Les premiers domaines de rapprochement sont :
 - énergie / Linky ;
 - audit générique de site web ;
 - confidentialité et mentions légales ;
-- cookies, traceurs et stockages locaux.
+- cookies, traceurs et stockages locaux ;
+- rattachement site / entité réelle ;
+- signaux de vigilance documentaire.
 
 ## Référence de conception
 
@@ -142,6 +187,8 @@ donnée manipulée
 +
 parcours possible
 +
+entité déclarée
++
 droit applicable
 +
 action possible
@@ -154,6 +201,15 @@ Ce dépôt est lié au projet associatif d'aide à la compréhension des droits 
 La branche associative d'accompagnement des particuliers est non lucrative et ne génère aucun revenu personnel.
 
 Toute valorisation d'algorithmes, d'outils ou de technologies auprès d'entreprises doit être séparée juridiquement, fonctionnellement et comptablement de la branche associative.
+
+## Documentation principale
+
+- `docs/DATA_JOURNEY_MODEL.md` — modèle public de parcours des données ;
+- `docs/LOCAL_ACTION_JOURNAL.md` — journal local navigateur ;
+- `docs/PRIVACY_READABILITY_REFERENCE.md` — référence de lisibilité ;
+- `docs/PUBLIC_BOUNDARY.md` — frontière de publication ;
+- `docs/SITE_AUDIT_SCOPE.md` — périmètre de l'audit ;
+- `docs/VIGILANCE_GAUGE_MODEL.md` — compteur de vigilance.
 
 ## Licence
 
