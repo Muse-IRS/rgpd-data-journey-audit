@@ -25,6 +25,10 @@ jobs:
           test -f docs/LOCAL_ACTION_JOURNAL.md
           test -f docs/PRIVACY_READABILITY_REFERENCE.md
           test -f docs/VIGILANCE_GAUGE_MODEL.md
+          test -f docs/VIGILANCE_GAUGE_NEEDLE.md
+          test -f docs/SSF_IRS_VALIDATION_MODEL.md
+          test -f docs/ENTITY_MATCH_PANEL.md
+          test -f docs/BRAND_COLOR_SYSTEM.md
           test -f examples/vigilance-gauge-output.md
           test -f public/index.html
           test -f public/privacy.html
