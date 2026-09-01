@@ -77,13 +77,13 @@
 
           <div class="field full">
             <label for="public-entity-query">Recherche société publique</label>
-            <input id="public-entity-query" name="public-entity-query" type="text" placeholder="CAPEVOL, 491567798, 49156779800013, lien Annuaire ou Pappers..." autocomplete="off">
-            <span class="help">Ce champ accepte un nom, un SIREN, un SIRET ou un lien public. Exemple : https://annuaire-entreprises.data.gouv.fr/etablissement/49156779800013</span>
+            <input id="public-entity-query" name="public-entity-query" type="text" placeholder="Nom de société, SIREN, SIRET, lien Annuaire ou Pappers..." autocomplete="off">
+            <span class="help">Ce champ accepte un nom, un SIREN, un SIRET ou un lien public. Exemple de format : https://annuaire-entreprises.data.gouv.fr/etablissement/[SIRET]</span>
           </div>
 
           <div class="field full">
             <label for="public-entity-import">Coller un résultat public visible</label>
-            <textarea id="public-entity-import" name="public-entity-import" rows="7" placeholder="Exemple : La société CAPEVOL est une SARL enregistrée sous le numéro SIREN 491 567 798, spécialisée dans le conseil pour les affaires et la gestion..."></textarea>
+            <textarea id="public-entity-import" name="public-entity-import" rows="7" placeholder="Exemple neutre : La société [NOM] est enregistrée sous le numéro SIREN [9 chiffres]. Forme juridique : [forme]. Activité déclarée : [activité]."></textarea>
             <span class="help">Coller ici un extrait visible depuis Pappers, Annuaire Entreprises, Google ou une page de mentions légales. L'interface extrait uniquement l'identité minimale.</span>
           </div>
 
