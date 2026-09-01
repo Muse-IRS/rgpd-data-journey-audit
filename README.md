@@ -1,6 +1,6 @@
 # RGPD Data Journey Audit
 
-Outil public minimal d'audit RGPD orienté parcours des données, droits applicables, cohérence documentaire et vigilance visuelle.
+Outil public minimal d'audit RGPD orienté parcours des données, droits applicables, cohérence documentaire, entité réelle et vigilance visuelle.
 
 Ce dépôt porte une couche publique issue du projet **Association droits aux données personnelles RGPD**. Son objectif est de rendre compréhensible, pour un non-spécialiste, la manière dont un site, une interface ou un service numérique présente ses traitements de données, ses mentions légales, sa politique de confidentialité, ses traceurs éventuels, ses stockages locaux, son rattachement à une entité réelle et les droits applicables.
 
@@ -25,6 +25,8 @@ SITE_RESULT
 +
 LEGAL_ENTITY
 +
+SSF-IRS
++
 DATA_JOURNEY
 +
 DATA_RIGHTS
@@ -45,13 +47,14 @@ Ce dépôt vise à construire une interface publique permettant à l'utilisateur
 5. quelles données quittent effectivement le navigateur ;
 6. quels acteurs ou destinataires sont mentionnés ;
 7. quelle société, association ou entité réelle est déclarée ;
-8. si cette entité semble rattachable à un registre officiel ;
-9. quelles finalités sont déclarées ;
-10. quelles bases juridiques sont indiquées ;
-11. quelles durées de conservation sont annoncées ;
-12. quels droits RGPD sont présentés ;
-13. comment exercer concrètement ces droits ;
-14. quelles incohérences, absences ou ambiguïtés apparaissent entre mentions légales, politique de confidentialité, cookies, traceurs, stockage local, entité déclarée et fonctionnement observable.
+8. où les informations société sont situées sur le site ;
+9. si cette entité semble rattachable à un registre officiel ;
+10. quelles finalités sont déclarées ;
+11. quelles bases juridiques sont indiquées ;
+12. quelles durées de conservation sont annoncées ;
+13. quels droits RGPD sont présentés ;
+14. comment exercer concrètement ces droits ;
+15. quelles incohérences, absences ou ambiguïtés apparaissent entre mentions légales, politique de confidentialité, cookies, traceurs, stockage local, entité déclarée et fonctionnement observable.
 
 ## Périmètre public
 
@@ -98,12 +101,33 @@ L'utilisateur peut renseigner l'adresse d'un site ou analyser manuellement une i
 - page cookies / traceurs présente ou absente ;
 - cohérence entre les documents ;
 - entité réelle déclarée ou non déclarée ;
+- dénomination, forme juridique, SIREN, SIRET, adresse et source externe ;
+- emplacement des informations dans le site : footer, mentions légales, confidentialité, CGV, contact, paiement ou autre ;
 - cohérence apparente entre site, société, registre officiel et paiement ;
 - acteurs identifiés ;
 - finalités déclarées ;
 - droits RGPD annoncés ;
 - moyens de contact ;
 - zones floues ou contradictoires.
+
+### Validation SSF-IRS publique
+
+Avant affichage interprété, les informations renseignées passent par une validation publique simple :
+
+```text
+OBSERVED_DATA
+→ SSF-IRS_PUBLIC_VALIDATION
+→ SAT / UNSAT / UNKNOWN
+→ USER-FACING_DISPLAY
+```
+
+Les statuts signifient :
+
+- `SAT` : information suffisamment cohérente selon les éléments renseignés et la vérification déclarée ;
+- `UNSAT` : information invalide, contradictoire ou déclarée incohérente ;
+- `UNKNOWN` : information absente, non localisée ou insuffisamment vérifiée.
+
+Cette validation ne remplace pas un contrôle juridique ou administratif officiel.
 
 ### Compteur de vigilance
 
@@ -115,7 +139,9 @@ jaune -> vigilance recommandée
 rouge -> alerte documentaire élevée
 ```
 
-Ce compteur ne certifie pas qu'un site est fiable, dangereux ou frauduleux. Il indique un niveau de vigilance documentaire à partir des éléments déclarés ou observés.
+Le compteur conserve le pourcentage et ajoute une aiguille lisible. Les repères vert, jaune et rouge restent visibles directement sur la jauge.
+
+Ce compteur ne certifie pas qu'un site est fiable, dangereux ou frauduleux. Il indique un niveau de vigilance documentaire à partir des éléments déclarés, observés et pré-validés.
 
 Le compteur doit toujours être accompagné d'une explication :
 
@@ -126,6 +152,20 @@ Ce qui manque.
 Ce qui reste flou.
 Ce que l'utilisateur peut faire.
 ```
+
+### Marque visuelle Muze-X
+
+L'interface reprend la palette publique utilisée par les interfaces DPE / Logement et Énergie / Linky de la plateforme Muze-X Lab : fond sombre, panneaux semi-transparents, accent vert clair et accent bleu clair.
+
+Les couleurs d'état sont normalisées :
+
+```text
+SAT     -> vert
+UNKNOWN -> jaune
+UNSAT   -> rouge
+```
+
+La couleur ne doit jamais être le seul indicateur : le statut textuel et l'explication restent obligatoires.
 
 ### Journal local compréhensible
 
@@ -185,6 +225,10 @@ document déclaré
 +
 donnée manipulée
 +
+emplacement sur le site
++
+pré-validation SSF-IRS
++
 parcours possible
 +
 entité déclarée
@@ -209,7 +253,11 @@ Toute valorisation d'algorithmes, d'outils ou de technologies auprès d'entrepri
 - `docs/PRIVACY_READABILITY_REFERENCE.md` — référence de lisibilité ;
 - `docs/PUBLIC_BOUNDARY.md` — frontière de publication ;
 - `docs/SITE_AUDIT_SCOPE.md` — périmètre de l'audit ;
-- `docs/VIGILANCE_GAUGE_MODEL.md` — compteur de vigilance.
+- `docs/VIGILANCE_GAUGE_MODEL.md` — compteur de vigilance ;
+- `docs/VIGILANCE_GAUGE_NEEDLE.md` — aiguille et pourcentage ;
+- `docs/SSF_IRS_VALIDATION_MODEL.md` — validation SAT / UNSAT / UNKNOWN ;
+- `docs/ENTITY_MATCH_PANEL.md` — panneau société / SIREN / SIRET / emplacement ;
+- `docs/BRAND_COLOR_SYSTEM.md` — palette publique Muze-X Lab.
 
 ## Licence
 
