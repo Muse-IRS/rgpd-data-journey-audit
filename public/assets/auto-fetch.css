@@ -25,6 +25,31 @@
   min-height: 88px;
 }
 
+#public-entity-import {
+  width: 100%;
+  min-height: 160px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: .85rem;
+  background: rgba(4, 11, 18, .78);
+  color: var(--text);
+  font: inherit;
+  resize: vertical;
+}
+
+#public-entity-import:focus {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+
+.auto-fetch-links {
+  align-items: stretch;
+}
+
+.auto-fetch-links .button {
+  min-height: 42px;
+}
+
 .auto-fetch-steps {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
