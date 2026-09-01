@@ -14,7 +14,7 @@
     <div class="shell hero-inner">
       <p class="eyebrow">Confidentialité</p>
       <h1>Le journal reste lisible et contrôlable.</h1>
-      <p class="lead">Cette notice décrit le comportement de la version publique minimale.</p>
+      <p class="lead">Cette notice décrit le comportement de la version publique minimale : traitement local, journal visible, dernier audit restaurable et effacement utilisateur.</p>
     </div>
   </header>
 
@@ -27,27 +27,49 @@
         <li>aucun SDK publicitaire ;</li>
         <li>aucun outil d'analytics externe ;</li>
         <li>aucun envoi automatique du journal local vers un serveur ;</li>
+        <li>aucune requête automatique vers Annuaire Entreprises, Sirene, RNE, Pappers ou data.gouv dans cette version ;</li>
         <li>aucune collecte volontaire de dossiers personnels ou de pièces administratives.</li>
       </ul>
     </section>
 
     <section class="panel">
-      <h2>Journal local</h2>
-      <p>La page peut enregistrer dans le navigateur certaines actions utiles à la compréhension : clics, ouverture de sections, génération d'une lecture locale, export ou effacement du journal.</p>
-      <p>Ce journal utilise le stockage local du navigateur. Il peut persister après fermeture de la page jusqu'à effacement par l'utilisateur ou suppression par le navigateur.</p>
-      <p>Le journal est affichable, exportable et effaçable depuis l'interface.</p>
+      <h2>Carnet local du navigateur</h2>
+      <p>La page peut enregistrer localement deux éléments dans le navigateur : un journal d'actions et le dernier audit local.</p>
+      <p>Ce stockage sert à rendre visible le comportement de l'interface : ce qui a été cliqué, ce qui a été généré, quels statuts ont été produits et quel audit peut être restauré.</p>
+      <p>Ces éléments peuvent persister après fermeture de la page jusqu'à effacement par l'utilisateur ou suppression par le navigateur.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Clés locales utilisées</h2>
+      <p>La version actuelle peut utiliser les deux clés suivantes dans le stockage local du navigateur :</p>
+      <pre>rgpd-data-journey-audit:local-action-log
+rgpd-data-journey-audit:last-local-audit</pre>
+      <p>La première clé conserve le journal des actions. La seconde clé conserve le dernier audit local afin de pouvoir le restaurer dans le formulaire et dans la restitution.</p>
     </section>
 
     <section class="panel">
       <h2>Données saisies</h2>
       <p>La version actuelle peut permettre à l'utilisateur de renseigner une adresse de site ou des observations manuelles. Ces informations servent à générer une lecture locale dans le navigateur.</p>
       <p>Les champs société — dénomination, forme juridique, SIREN, SIRET, adresse déclarée, source externe et emplacement sur le site — sont utilisés localement pour produire une restitution SSF-IRS SAT / UNSAT / UNKNOWN.</p>
-      <p>Aucune requête de consultation automatique du site renseigné, d'Annuaire Entreprises, de Sirene, de RNE ou de Pappers n'est effectuée dans cette version minimale.</p>
+      <p>Lorsque l'utilisateur génère une lecture locale, le dernier audit peut être conservé dans le navigateur pour affichage, vérification, restauration ou effacement.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Contrôles utilisateur</h2>
+      <ul>
+        <li>afficher une explication simple du stockage local ;</li>
+        <li>voir ce qui est stocké par cette interface ;</li>
+        <li>afficher le journal local ;</li>
+        <li>exporter le journal au format JSON ;</li>
+        <li>restaurer le dernier audit local ;</li>
+        <li>effacer le journal local ;</li>
+        <li>effacer toutes les données locales de cette interface.</li>
+      </ul>
     </section>
 
     <section class="panel">
       <h2>Affichage et validation locale</h2>
-      <p>Le compteur de vigilance, le pourcentage, l'aiguille et le tableau société sont calculés dans le navigateur à partir des informations indiquées par l'utilisateur.</p>
+      <p>Le compteur de vigilance, le pourcentage, l'aiguille, les statuts SSF-IRS et le tableau société sont calculés dans le navigateur à partir des informations indiquées par l'utilisateur.</p>
       <p>Le résultat ne constitue pas une certification, une preuve de fraude ou un avis juridique. Il s'agit d'une lecture documentaire destinée à orienter la vigilance.</p>
     </section>
 
@@ -58,7 +80,7 @@
 
     <section class="callout">
       <strong>Principe</strong>
-      <p>Pas de profilage, pas de transmission applicative par défaut, pas de donnée personnelle réelle dans le dépôt public.</p>
+      <p>Pas de profilage, pas de transmission applicative par défaut, pas de donnée personnelle réelle dans le dépôt public. Les traces locales sont visibles, restaurables et effaçables par l'utilisateur.</p>
     </section>
   </main>
 
