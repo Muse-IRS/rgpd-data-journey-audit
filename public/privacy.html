@@ -11,7 +11,7 @@
 </head>
 <body>
   <header class="hero compact">
-    <div class="shell">
+    <div class="shell hero-inner">
       <p class="eyebrow">Confidentialité</p>
       <h1>Le journal reste lisible et contrôlable.</h1>
       <p class="lead">Cette notice décrit le comportement de la version publique minimale.</p>
@@ -41,7 +41,14 @@
     <section class="panel">
       <h2>Données saisies</h2>
       <p>La version actuelle peut permettre à l'utilisateur de renseigner une adresse de site ou des observations manuelles. Ces informations servent à générer une lecture locale dans le navigateur.</p>
-      <p>Aucune requête de consultation automatique du site renseigné n'est effectuée dans cette version minimale.</p>
+      <p>Les champs société — dénomination, forme juridique, SIREN, SIRET, adresse déclarée, source externe et emplacement sur le site — sont utilisés localement pour produire une restitution SSF-IRS SAT / UNSAT / UNKNOWN.</p>
+      <p>Aucune requête de consultation automatique du site renseigné, d'Annuaire Entreprises, de Sirene, de RNE ou de Pappers n'est effectuée dans cette version minimale.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Affichage et validation locale</h2>
+      <p>Le compteur de vigilance, le pourcentage, l'aiguille et le tableau société sont calculés dans le navigateur à partir des informations indiquées par l'utilisateur.</p>
+      <p>Le résultat ne constitue pas une certification, une preuve de fraude ou un avis juridique. Il s'agit d'une lecture documentaire destinée à orienter la vigilance.</p>
     </section>
 
     <section class="panel">
@@ -56,7 +63,7 @@
   </main>
 
   <footer class="footer">
-    <div class="shell">
+    <div class="shell footer-inner">
       <span>RGPD Data Journey Audit</span>
       <a href="./">Retour</a>
     </div>
