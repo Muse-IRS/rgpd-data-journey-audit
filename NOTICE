@@ -1,0 +1,9 @@
+RGPD Data Journey Audit
+Copyright 2026 Muse-IRS
+
+Public educational and technical layer for data journey and GDPR-oriented understanding.
+
+This repository exposes only public-facing logic, documentation and interface code.
+Private methods, internal heuristics, research protocols, matrices, personal data and case files are excluded from this repository.
+
+No affiliation with Apple, ADEME, Enedis, CNIL or any third-party service is implied unless explicitly stated by that third party.
