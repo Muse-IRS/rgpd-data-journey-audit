@@ -21,7 +21,7 @@
         <span>+</span>
         <span>LEGAL_ENTITY</span>
         <span>+</span>
-        <span>FETCH</span>
+        <span>PUBLIC_LOOKUP</span>
         <span>+</span>
         <span>SSF-IRS</span>
         <span>+</span>
@@ -44,7 +44,8 @@
         <li>mentions légales ;</li>
         <li>politique de confidentialité ;</li>
         <li>cookies, traceurs et stockage local ;</li>
-        <li>récupération volontaire depuis l'URL auditée lorsque le navigateur peut lire le site ;</li>
+        <li>liens publics Pappers / Annuaire / API construits depuis l'URL ou le nom saisi ;</li>
+        <li>import par collage d'un résultat public visible ;</li>
         <li>entité réelle déclarée, SIREN, SIRET, adresse et source externe ;</li>
         <li>emplacement exact des informations sur le site audité ;</li>
         <li>validation publique SSF-IRS : SAT, UNSAT, UNKNOWN ;</li>
@@ -56,25 +57,40 @@
 
     <section class="panel" id="audit">
       <h2>Audit déclaratif minimal</h2>
-      <p class="muted">Cette version peut tenter une récupération automatique uniquement après action de l'utilisateur. Si le site refuse la lecture depuis le navigateur, les champs manuels restent disponibles.</p>
+      <p class="muted">Cette version privilégie les sources publiques accessibles sans compte ni jeton : liens directs, API ouverte et import par collage. Les champs restent toujours modifiables.</p>
       <form id="audit-form">
         <div class="field full">
           <label for="target-url">Site ou interface auditée</label>
           <input id="target-url" name="target-url" type="url" inputmode="url" placeholder="https://example.org" autocomplete="off">
-          <span class="help">L'adresse reste visible localement. L'utilisateur peut afficher, restaurer ou effacer les traces locales.</span>
+          <span class="help">L'adresse reste visible localement. Elle sert aussi à construire des liens publics de recherche société.</span>
         </div>
 
         <section class="auto-fetch-box" aria-labelledby="auto-fetch-title">
-          <h3 id="auto-fetch-title">Récupération automatique depuis l'URL</h3>
-          <p class="muted">Action volontaire : l'interface tente de lire la page publique, d'identifier les liens utiles, d'extraire SIREN/SIRET/adresse si présents, puis d'interroger l'API Recherche d'Entreprises. Le résultat préremplit les champs, qui restent modifiables.</p>
-          <div class="auto-fetch-steps" aria-label="Étapes de récupération automatique">
-            <article><strong>1. Lire</strong><span>Page HTTPS renseignée, si CORS l'autorise.</span></article>
-            <article><strong>2. Extraire</strong><span>Mentions, SIREN, SIRET, adresse, liens utiles.</span></article>
-            <article><strong>3. Vérifier</strong><span>Recherche d'Entreprises, si API accessible.</span></article>
-            <article><strong>4. Afficher</strong><span>Préremplissage puis SSF-IRS SAT / UNSAT / UNKNOWN.</span></article>
+          <h3 id="auto-fetch-title">Récupération publique société</h3>
+          <p class="muted">Action volontaire : l'interface construit des liens publics Pappers / Annuaire / API depuis l'URL auditée ou depuis un terme société. L'utilisateur peut ouvrir ces liens, copier les données visibles, puis les réinjecter dans la logique SSF-IRS.</p>
+          <div class="auto-fetch-steps" aria-label="Étapes de récupération publique">
+            <article><strong>1. Construire</strong><span>Terme société, SIREN, SIRET, URL ou indice de domaine.</span></article>
+            <article><strong>2. Ouvrir</strong><span>Pappers public, Annuaire Entreprises, API ouverte ou Google-Pappers.</span></article>
+            <article><strong>3. Coller</strong><span>Résultat visible : dénomination, SIREN, SIRET, forme, activité.</span></article>
+            <article><strong>4. Réinjecter</strong><span>Préremplissage puis SSF-IRS SAT / UNSAT / UNKNOWN.</span></article>
           </div>
+
+          <div class="field full">
+            <label for="public-entity-query">Recherche société publique</label>
+            <input id="public-entity-query" name="public-entity-query" type="text" placeholder="CAPEVOL, 491567798, 49156779800013, lien Annuaire ou Pappers..." autocomplete="off">
+            <span class="help">Ce champ accepte un nom, un SIREN, un SIRET ou un lien public. Exemple : https://annuaire-entreprises.data.gouv.fr/etablissement/49156779800013</span>
+          </div>
+
+          <div class="field full">
+            <label for="public-entity-import">Coller un résultat public visible</label>
+            <textarea id="public-entity-import" name="public-entity-import" rows="7" placeholder="Exemple : La société CAPEVOL est une SARL enregistrée sous le numéro SIREN 491 567 798, spécialisée dans le conseil pour les affaires et la gestion..."></textarea>
+            <span class="help">Coller ici un extrait visible depuis Pappers, Annuaire Entreprises, Google ou une page de mentions légales. L'interface extrait uniquement l'identité minimale.</span>
+          </div>
+
           <div class="actions">
             <button type="button" id="auto-fetch-site">Préremplir depuis le site et l'API</button>
+            <button type="button" class="secondary" id="build-public-links">Construire les liens publics</button>
+            <button type="button" class="secondary" id="import-public-text">Importer le texte public collé</button>
             <button type="button" class="secondary" id="clear-auto-fetch">Effacer le résultat automatique</button>
           </div>
           <div id="auto-fetch-status" class="auto-fetch-status" role="status" aria-live="polite">Aucune récupération lancée.</div>
@@ -189,9 +205,9 @@
       <h2>Parcours des données</h2>
       <ol class="journey">
         <li>Utilisateur</li>
-        <li>Action volontaire : saisie URL ou récupération automatique</li>
-        <li>Lecture de la page publique si le navigateur y est autorisé</li>
-        <li>Données saisies ou observées</li>
+        <li>Action volontaire : saisie URL, construction de liens ou import par collage</li>
+        <li>Ouverture possible des sources publiques sans compte : Pappers, Annuaire, API</li>
+        <li>Données saisies, observées ou collées depuis un résultat public</li>
         <li>Recherche API publique si un SIREN, SIRET ou nom est exploitable</li>
         <li>Pré-validation SSF-IRS : SAT / UNSAT / UNKNOWN</li>
         <li>Trace locale visible dans le navigateur</li>
@@ -217,7 +233,7 @@
         </article>
         <article>
           <strong>Quoi ?</strong>
-          <span>Journal des actions et dernier audit local.</span>
+          <span>Journal des actions, dernier audit local et dernier jeu de liens publics construit.</span>
         </article>
         <article>
           <strong>Contrôle</strong>
