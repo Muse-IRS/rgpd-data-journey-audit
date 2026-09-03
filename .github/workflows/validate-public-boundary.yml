@@ -32,6 +32,7 @@ jobs:
           test -f docs/SSF_IRS_VALIDATION_MODEL.md
           test -f docs/ENTITY_MATCH_PANEL.md
           test -f docs/BRAND_COLOR_SYSTEM.md
+          test -f docs/MUZE_X_PORTAL_ATTRACTOR.md
           test -f examples/vigilance-gauge-output.md
           test -f public/index.html
           test -f public/privacy.html
@@ -44,11 +45,29 @@ jobs:
           test -f public/assets/favicon.svg
           test -f public/assets/brand.css
           test -f public/assets/data-value.css
+          test -f public/assets/mesh-portal.css
+          test -f public/assets/mesh-portal.js
 
       - name: Check JavaScript syntax
         run: |
           node --check public/assets/app.js
           node --check public/assets/entity-auto-fetch.js
+          node --check public/assets/mesh-portal.js
+
+      - name: Require portal attractor on every public HTML page
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          missing = []
+          for path in Path('public').rglob('*.html'):
+              text = path.read_text(encoding='utf-8')
+              if 'mesh-portal.css' not in text or 'mesh-portal.js' not in text:
+                  missing.append(str(path))
+          if missing:
+              raise SystemExit('Portal attractor missing from: ' + ', '.join(missing))
+          PY
 
       - name: Enforce public repository boundary
         shell: bash
