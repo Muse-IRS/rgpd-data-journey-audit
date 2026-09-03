@@ -4,9 +4,9 @@
   <img src="public/assets/brand-logo.svg" alt="Muze-X Lab — Collaborative Platform" width="760">
 </p>
 
-Outil public minimal d'audit RGPD orienté parcours des données, droits applicables, cohérence documentaire, entité réelle, traces locales, préremplissage automatique et vigilance visuelle.
+Outil public minimal d'audit RGPD orienté parcours des données, droits applicables, cohérence documentaire, entité réelle, traces locales, préremplissage automatique, valorisation des données, recommandations et vigilance visuelle.
 
-Ce dépôt porte une couche publique issue du projet **Association droits aux données personnelles RGPD**. Son objectif est de rendre compréhensible, pour un non-spécialiste, la manière dont un site, une interface ou un service numérique présente ses traitements de données, ses mentions légales, sa politique de confidentialité, ses traceurs éventuels, ses stockages locaux, son rattachement à une entité réelle et les droits applicables.
+Ce dépôt porte une couche publique issue du projet **Association droits aux données personnelles RGPD**. Son objectif est de rendre compréhensible, pour un non-spécialiste, la manière dont un site, une interface ou un service numérique présente ses traitements de données, ses mentions légales, sa politique de confidentialité, ses traceurs éventuels, ses stockages locaux, son rattachement à une entité réelle, la valeur économique éventuellement produite par les données et les droits applicables.
 
 ## Identité visuelle Muze-X Lab
 
@@ -18,7 +18,7 @@ Le favicon reprend le monogramme et la fiole afin que les différentes surfaces 
 
 ## Principe directeur
 
-Comprendre un résultat ne suffit pas. Il faut aussi comprendre quelles données permettent de produire ce résultat, où elles circulent, qui peut les traiter, pourquoi, pendant combien de temps, ce qui reste dans le navigateur, ce qui est récupéré volontairement, et comment agir.
+Comprendre un résultat ne suffit pas. Il faut aussi comprendre quelles données permettent de produire ce résultat, où elles circulent, qui peut les traiter, pourquoi, pendant combien de temps, ce qui reste dans le navigateur, ce qui est récupéré volontairement, quelle valeur économique peut être identifiable, et comment agir.
 
 ```text
 DOMAIN_RESULT
@@ -49,6 +49,46 @@ RISK_SIGNALS
 =
 PUBLIC_UNDERSTANDING
 ```
+
+## Valeur des données, recommandations et contrôle
+
+La couche publique ajoute une question quotidienne simple :
+
+> Qui tire une valeur de mes données, sous quelle forme, et quels réglages permettent de conserver ce qui est utile tout en réduisant ce qui devient du bruit ?
+
+Chaîne de lecture :
+
+```text
+DONNEE
+-> COLLECTE
+-> USAGE
+-> DESTINATAIRE
+-> FINALITE
+-> TRANSFERT / PARTAGE / ACCES
+-> VALEUR ECONOMIQUE EVENTUELLE
+-> CONTROLE UTILISATEUR
+```
+
+Verrous :
+
+```text
+MONETISATION_DES_DONNEES != VENTE_DIRECTE_DES_DONNEES
+PARTAGE_DE_DONNEES != VENTE_DIRECTE_DES_DONNEES
+PUBLICITE_APRES_CONVERSATION != PREUVE_UTILISATION_MICROPHONE
+RECOMMANDATION_PERTINENTE != LEGITIMITE_AUTOMATIQUE_DE_LA_COLLECTE
+```
+
+La personnalisation n'est pas classée comme bonne ou mauvaise en soi. La couche distingue deux axes : **utilité pour l'utilisateur** et **coût de collecte / vie privée**. Une recommandation utile peut être conservée ; une personnalisation surtout bruyante peut être réduite ; une fonction utile mais jugée trop intrusive peut être ajustée en limitant les permissions ou signaux non nécessaires.
+
+La page publique `public/data-value/` explique notamment :
+
+- les formes possibles de valeur économique ;
+- pourquoi une publicité après une conversation ne démontre pas, à elle seule, l'utilisation du microphone ;
+- les autres signaux pouvant alimenter une recommandation ;
+- comment examiner permissions d'application, navigateur, moteur de recherche, historique, publicité personnalisée et suggestions ;
+- quels éléments doivent rester en `UNKNOWN` en l'absence de preuve suffisante.
+
+Cette page est statique : elle ne lit pas les permissions, le microphone, l'historique, les cookies ou les réglages de l'appareil.
 
 ## Déchets informationnels
 
@@ -110,7 +150,11 @@ Ce dépôt vise à construire une interface publique permettant à l'utilisateur
 15. quelles traces locales cette interface écrit dans le navigateur ;
 16. quelles requêtes externes sont lancées volontairement par l'utilisateur ;
 17. quelles incohérences, absences ou ambiguïtés apparaissent entre mentions légales, politique de confidentialité, cookies, traceurs, stockage local, entité déclarée et fonctionnement observable ;
-18. quel traitement informationnel manque encore pour rendre un élément compréhensible et réutilisable.
+18. quel traitement informationnel manque encore pour rendre un élément compréhensible et réutilisable ;
+19. quelle personnalisation ou recommandation est déclarée ou observable ;
+20. quelle valeur économique éventuelle peut être reliée aux données ;
+21. si une vente directe ou une contrepartie financière est réellement établie ou doit rester `UNKNOWN` ;
+22. quels réglages permettent de conserver, ajuster ou réduire la personnalisation.
 
 ## Périmètre public
 
@@ -125,6 +169,8 @@ Le dépôt contient uniquement la couche publique nécessaire à :
 - l'explication des traces locales écrites dans le navigateur ;
 - le préremplissage volontaire des données société lorsque les sources sont lisibles ;
 - la lecture des frictions et déchets informationnels ;
+- la compréhension de la valeur économique possible, de la personnalisation et des recommandations ;
+- l'orientation vers les catégories de réglages utilisateur ;
 - la documentation minimale de fonctionnement.
 
 Le dépôt ne contient pas :
@@ -168,7 +214,8 @@ L'utilisateur peut renseigner l'adresse d'un site, lancer une récupération vol
 - droits RGPD annoncés ;
 - moyens de contact ;
 - zones floues ou contradictoires ;
-- friction informationnelle : doublons, provenance manquante, contexte perdu, fragmentation, obsolescence relative ou divergence à traiter.
+- friction informationnelle : doublons, provenance manquante, contexte perdu, fragmentation, obsolescence relative ou divergence à traiter ;
+- partage, personnalisation ou valeur économique déclarés sans transformer automatiquement ces éléments en « vente de données ».
 
 ### Récupération automatique volontaire
 
@@ -288,6 +335,11 @@ Ce que l'utilisateur peut faire
 Ce qui reste localement dans le navigateur
 Ce qui a été récupéré volontairement
 Quel traitement informationnel manque encore
+Quelle personnalisation est déclarée
+Quelle valeur économique est identifiable
+Vente directe : OBS | UNKNOWN
+Contrepartie financière : OBS | UNKNOWN
+Ce que l'utilisateur peut conserver, ajuster ou réduire
 ```
 
 ## Domaines d'application initiaux
@@ -301,7 +353,9 @@ Les premiers domaines de rapprochement sont :
 - cookies, traceurs et stockages locaux ;
 - rattachement site / entité réelle ;
 - signaux de vigilance documentaire ;
-- déchets et frictions informationnels.
+- déchets et frictions informationnels ;
+- valorisation économique des données ;
+- personnalisation, recommandations et contrôle utilisateur.
 
 ## Référence de conception
 
@@ -334,6 +388,8 @@ parcours possible
 +
 entité déclarée
 +
+valeur économique identifiable ou UNKNOWN
++
 droit applicable
 +
 action possible
@@ -350,6 +406,7 @@ Toute valorisation d'algorithmes, d'outils ou de technologies auprès d'entrepri
 ## Documentation principale
 
 - `docs/DATA_JOURNEY_MODEL.md` — modèle public de parcours des données ;
+- `docs/DATA_VALUE_AND_RECOMMENDATION.md` — valeur économique, recommandations, personnalisation et contrôle utilisateur ;
 - `docs/INFORMATION_WASTE_PUBLIC_ADAPTER.md` — lecture publique des déchets et frictions informationnels ;
 - `docs/LOCAL_ACTION_JOURNAL.md` — journal local navigateur ;
 - `docs/USER_LOCAL_STORAGE_EXPLANATION.md` — explication utilisateur du carnet local ;
