@@ -10,8 +10,6 @@ RGPD DATA JOURNEY
     MUZE-X LAB
 ```
 
-The attractor now follows the same immersive full-viewport visual model as Muze-X Open Learning Commons.
-
 ## Navigation rule
 
 ```text
@@ -19,30 +17,26 @@ PORTAL_ATTRACTOR
 =
 FULL_VIEWPORT_SWARM_FIELD
 +
+BOTTOM_NAVIGATION_ANCHOR
++
 VISIBLE_NAVIGATION_SIGNAL
 +
 EXPLICIT_USER_ACTION
 ```
 
-It is not a cognitive measurement or an epistemic result:
+The interface effect remains visually exploratory:
 
 ```text
 VISUAL_METAPHOR != SCIENTIFIC_PROOF
 INTERACTION_EFFECT != COGNITIVE_MEASUREMENT
+PERCEIVED_DEPTH != GEOMETRIC_3D
 ```
 
-Pointer or touch input may change the local visual field only.
+Pointer, touch and anchor visibility may change the local visual field only. They do not determine RGPD results or documentary qualification.
 
-```text
-TOUCH / POINTER
--> LOCAL_VISUAL_RESPONSE
-```
+## Full-screen field and bottom anchor
 
-The implementation must not use those movements to infer interests, choose audit results, alter SSF-IRS qualification, rank content, or build a behavioural profile.
-
-## Layout rule
-
-The attractor is a fixed visual layer covering the viewport. It is not inserted as a content block.
+The swarm remains a fixed visual layer covering the viewport across the complete page. It is not inserted as a content block.
 
 ```text
 ATTRACTOR_PRESENT
@@ -50,29 +44,41 @@ ATTRACTOR_PRESENT
 CONTENT_REFLOW
 ```
 
-The RGPD page must keep the same document structure and responsive geometry whether the attractor is active or absent.
+A circular navigation anchor is placed immediately before the footer.
 
-The two particle populations may move horizontally and vertically across the complete viewport, including edge wrapping from one side of the screen to the opposite side.
+When that anchor enters the viewport, the same two full-screen particle populations converge locally toward it. When it leaves the viewport, they return to their normal horizontal and vertical field dynamics.
 
-The return link to Muze-X Lab is a lightweight overlay control and reserves no space in the document flow.
+```text
+ANCHOR_VISIBLE
+-> LOCAL_SWARM_GATHERING
 
-## Privacy boundary
+ANCHOR_HIDDEN
+-> BASE_FIELD_DYNAMICS
+```
 
-The portal implementation:
+No second swarm is created for the circle.
 
-- requires no account;
-- requires no identifier;
-- writes no portal interaction to local storage;
-- sends no portal telemetry;
-- stores no pointer or touch trajectory;
-- performs navigation only after the user activates the explicit hyperlink.
+The current tablet/desktop target diameter is approximately `292 CSS px`, reduced further on small screens and calibrated around the interior navigation text.
 
-Its temporary visual state disappears with the page lifecycle.
+The return circle links explicitly to Muze-X Lab. The existing lightweight overlay navigation remains available and reserves no space in the document flow.
+
+Directly beneath the circle, the deployment identifies the current technique and rendered effect:
+
+- Canvas 2D;
+- two cyan/violet swarms;
+- full-viewport field;
+- anchor attractor;
+- emergent perceptual depth;
+- exploratory R&D qualification.
+
+## Local-state boundary
+
+The portal requires no account or identifier. Its temporary visual state remains local to the page lifecycle, and navigation occurs only after an explicit hyperlink activation.
 
 ## Deployment rule
 
-Every public HTML surface of this autonomous RGPD deployment should expose the full-screen Muze-X attractor unless a documented accessibility or technical reason requires a reduced alternative.
+Every public HTML surface of this autonomous RGPD deployment should expose the full-screen Muze-X attractor and bottom anchor unless a documented accessibility or technical reason requires a reduced alternative.
 
-CI verifies the presence of the attractor assets and their references so a future page change cannot silently detach the RGPD deployment from the public Muze-X mesh.
+CI verifies the presence of the attractor assets, anchor implementation and conceptual-interface qualification so a future page change cannot silently detach the RGPD deployment from the public Muze-X mesh.
 
 This component is exploratory interface R&D. Its presence or visual effectiveness does not constitute scientific validation of a learning, cognition, attention or behavioural model.
