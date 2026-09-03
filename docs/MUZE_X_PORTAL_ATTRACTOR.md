@@ -10,13 +10,15 @@ RGPD DATA JOURNEY
     MUZE-X LAB
 ```
 
-The portal attractor is a compact visual derivative of the immersive attractor used by Muze-X Open Learning Commons.
+The attractor now follows the same immersive full-viewport visual model as Muze-X Open Learning Commons.
 
 ## Navigation rule
 
 ```text
 PORTAL_ATTRACTOR
 =
+FULL_VIEWPORT_SWARM_FIELD
++
 VISIBLE_NAVIGATION_SIGNAL
 +
 EXPLICIT_USER_ACTION
@@ -29,7 +31,7 @@ VISUAL_METAPHOR != SCIENTIFIC_PROOF
 INTERACTION_EFFECT != COGNITIVE_MEASUREMENT
 ```
 
-Pointer or touch input may change the local particle animation only.
+Pointer or touch input may change the local visual field only.
 
 ```text
 TOUCH / POINTER
@@ -37,6 +39,22 @@ TOUCH / POINTER
 ```
 
 The implementation must not use those movements to infer interests, choose audit results, alter SSF-IRS qualification, rank content, or build a behavioural profile.
+
+## Layout rule
+
+The attractor is a fixed visual layer covering the viewport. It is not inserted as a content block.
+
+```text
+ATTRACTOR_PRESENT
+!=
+CONTENT_REFLOW
+```
+
+The RGPD page must keep the same document structure and responsive geometry whether the attractor is active or absent.
+
+The two particle populations may move horizontally and vertically across the complete viewport, including edge wrapping from one side of the screen to the opposite side.
+
+The return link to Muze-X Lab is a lightweight overlay control and reserves no space in the document flow.
 
 ## Privacy boundary
 
@@ -53,8 +71,8 @@ Its temporary visual state disappears with the page lifecycle.
 
 ## Deployment rule
 
-Every public HTML surface of this autonomous RGPD deployment should expose the Muze-X portal unless a documented accessibility or technical reason requires an equivalent visible return link.
+Every public HTML surface of this autonomous RGPD deployment should expose the full-screen Muze-X attractor unless a documented accessibility or technical reason requires a reduced alternative.
 
-CI verifies the presence of the portal assets and their references so a future page change cannot silently detach the RGPD deployment from the public Muze-X mesh.
+CI verifies the presence of the attractor assets and their references so a future page change cannot silently detach the RGPD deployment from the public Muze-X mesh.
 
 This component is exploratory interface R&D. Its presence or visual effectiveness does not constitute scientific validation of a learning, cognition, attention or behavioural model.
