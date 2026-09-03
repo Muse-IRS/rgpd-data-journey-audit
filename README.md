@@ -1,8 +1,20 @@
 # RGPD Data Journey Audit
 
+<p align="center">
+  <img src="public/assets/brand-logo.svg" alt="Muze-X Lab — Collaborative Platform" width="760">
+</p>
+
 Outil public minimal d'audit RGPD orienté parcours des données, droits applicables, cohérence documentaire, entité réelle, traces locales, préremplissage automatique et vigilance visuelle.
 
 Ce dépôt porte une couche publique issue du projet **Association droits aux données personnelles RGPD**. Son objectif est de rendre compréhensible, pour un non-spécialiste, la manière dont un site, une interface ou un service numérique présente ses traitements de données, ses mentions légales, sa politique de confidentialité, ses traceurs éventuels, ses stockages locaux, son rattachement à une entité réelle et les droits applicables.
+
+## Identité visuelle Muze-X Lab
+
+RGPD Data Journey Audit conserve son autonomie fonctionnelle tout en partageant l'identité visuelle de Muze-X Lab : monogramme blanc et bleu, fiole de laboratoire, nom `Muze-X Lab` et mention `Collaborative Platform`.
+
+**Co-conception visuelle : Muze-X × ChatGPT (OpenAI).** ChatGPT est crédité pour sa contribution créative à cette identité visuelle dans le cadre du travail collaboratif avec Muze-X. Cette mention documente la contribution créative ; elle ne constitue pas, à elle seule, une qualification juridique de la titularité des droits.
+
+Le favicon reprend le monogramme et la fiole afin que les différentes surfaces publiques restent immédiatement rattachables au même ensemble sans effacer leur spécialisation propre.
 
 ## Principe directeur
 
