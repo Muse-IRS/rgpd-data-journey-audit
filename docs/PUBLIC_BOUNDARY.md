@@ -9,7 +9,8 @@ It may contain:
 - minimal interface code;
 - examples with synthetic or public data only;
 - generic audit structures;
-- domain-level data journey explanations.
+- domain-level data journey explanations;
+- public explanations of data value, personalization, recommendation systems and user controls.
 
 It must not contain:
 
@@ -47,6 +48,18 @@ why it is processed
 how long it may be kept
 which rights may apply
 how the user can act
+what personalization is declared
+what economic value is identifiable
+what remains UNKNOWN
+```
+
+Additional epistemic locks:
+
+```text
+DATA_MONETIZATION != DIRECT_DATA_SALE
+DECLARED_DATA_SHARING != DIRECT_DATA_SALE
+AD_AFTER_CONVERSATION != PROOF_OF_MICROPHONE_USE
+UTILITY != AUTOMATIC_LEGITIMACY
 ```
 
 No private case material belongs in this repository.

@@ -22,6 +22,7 @@ jobs:
           test -f NOTICE
           test -f docs/PUBLIC_BOUNDARY.md
           test -f docs/DATA_JOURNEY_MODEL.md
+          test -f docs/DATA_VALUE_AND_RECOMMENDATION.md
           test -f docs/LOCAL_ACTION_JOURNAL.md
           test -f docs/USER_LOCAL_STORAGE_EXPLANATION.md
           test -f docs/AUTOMATIC_SITE_ENTITY_FETCH.md
@@ -34,6 +35,7 @@ jobs:
           test -f examples/vigilance-gauge-output.md
           test -f public/index.html
           test -f public/privacy.html
+          test -f public/data-value/index.html
           test -f public/assets/app.js
           test -f public/assets/entity-auto-fetch.js
           test -f public/assets/styles.css
@@ -41,6 +43,7 @@ jobs:
           test -f public/assets/brand-logo.svg
           test -f public/assets/favicon.svg
           test -f public/assets/brand.css
+          test -f public/assets/data-value.css
 
       - name: Check JavaScript syntax
         run: |
