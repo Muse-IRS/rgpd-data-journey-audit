@@ -38,6 +38,9 @@ jobs:
           test -f public/assets/entity-auto-fetch.js
           test -f public/assets/styles.css
           test -f public/assets/auto-fetch.css
+          test -f public/assets/brand-logo.svg
+          test -f public/assets/favicon.svg
+          test -f public/assets/brand.css
 
       - name: Check JavaScript syntax
         run: |
