@@ -38,6 +38,45 @@ RISK_SIGNALS
 PUBLIC_UNDERSTANDING
 ```
 
+## Déchets informationnels
+
+Le projet ajoute une lecture simple de ce qui peut être appelé **déchets informationnels** : non pas des informations nécessairement fausses ou à supprimer, mais des informations qui demandent encore un traitement avant de pouvoir être comprises, reliées ou réutilisées correctement.
+
+Exemples : doublon, version obsolète pour l'usage courant, provenance manquante, contexte perdu, information fragmentée entre plusieurs services, divergence non résolue ou formulation plus certaine que ce que les éléments observés permettent.
+
+```text
+SOURCE
+-> CONTEXT
+-> PROVENANCE
+-> TIME
+-> RELATION
+-> QUALIFICATION
+-> REUSE | UNKNOWN | DIVERGENT | DISCARD_WITH_JUSTIFICATION
+-> PUBLIC_UNDERSTANDING
+```
+
+Le statut reste relationnel : une information peu utile aujourd'hui peut redevenir pertinente lorsqu'une provenance, une date ou une nouvelle relation lui redonne du contexte. Écarter une information d'une restitution ne signifie pas effacer sa source ou son historique.
+
+L'objectif public dépasse donc le seul accès :
+
+```text
+INFORMATIONAL_EQUALITY
+=
+ACCESS
++
+PROCESSING_CAPACITY
++
+UNDERSTANDING
++
+TRACEABILITY
+```
+
+La pollution informationnelle est utilisée ici comme une image du **coût de mise en intelligibilité** supporté par l'utilisateur lorsqu'il doit lui-même chercher, comparer, dater, dédupliquer et relier des informations dispersées.
+
+### Clin d'œil — inspiration
+
+La formulation **« déchets informationnels »** utilisée dans ce projet est un clin d'œil aux conférences d'**Idriss Aberkane**, qui ont nourri l'intuition à l'origine de cette expression dans notre travail. Cette mention décrit une inspiration : elle ne lui attribue ni la paternité scientifique du présent cadre, ni une participation au projet, ni une validation de celui-ci.
+
 ## Objet du dépôt
 
 Ce dépôt vise à construire une interface publique permettant à l'utilisateur d'auditer un site, une interface ou un service numérique selon une lecture simple :
@@ -58,7 +97,8 @@ Ce dépôt vise à construire une interface publique permettant à l'utilisateur
 14. comment exercer concrètement ces droits ;
 15. quelles traces locales cette interface écrit dans le navigateur ;
 16. quelles requêtes externes sont lancées volontairement par l'utilisateur ;
-17. quelles incohérences, absences ou ambiguïtés apparaissent entre mentions légales, politique de confidentialité, cookies, traceurs, stockage local, entité déclarée et fonctionnement observable.
+17. quelles incohérences, absences ou ambiguïtés apparaissent entre mentions légales, politique de confidentialité, cookies, traceurs, stockage local, entité déclarée et fonctionnement observable ;
+18. quel traitement informationnel manque encore pour rendre un élément compréhensible et réutilisable.
 
 ## Périmètre public
 
@@ -72,6 +112,7 @@ Le dépôt contient uniquement la couche publique nécessaire à :
 - la restitution d'un niveau de vigilance documentaire ;
 - l'explication des traces locales écrites dans le navigateur ;
 - le préremplissage volontaire des données société lorsque les sources sont lisibles ;
+- la lecture des frictions et déchets informationnels ;
 - la documentation minimale de fonctionnement.
 
 Le dépôt ne contient pas :
@@ -114,7 +155,8 @@ L'utilisateur peut renseigner l'adresse d'un site, lancer une récupération vol
 - finalités déclarées ;
 - droits RGPD annoncés ;
 - moyens de contact ;
-- zones floues ou contradictoires.
+- zones floues ou contradictoires ;
+- friction informationnelle : doublons, provenance manquante, contexte perdu, fragmentation, obsolescence relative ou divergence à traiter.
 
 ### Récupération automatique volontaire
 
@@ -233,6 +275,7 @@ Ce qui reste à vérifier
 Ce que l'utilisateur peut faire
 Ce qui reste localement dans le navigateur
 Ce qui a été récupéré volontairement
+Quel traitement informationnel manque encore
 ```
 
 ## Domaines d'application initiaux
@@ -245,7 +288,8 @@ Les premiers domaines de rapprochement sont :
 - confidentialité et mentions légales ;
 - cookies, traceurs et stockages locaux ;
 - rattachement site / entité réelle ;
-- signaux de vigilance documentaire.
+- signaux de vigilance documentaire ;
+- déchets et frictions informationnels.
 
 ## Référence de conception
 
@@ -294,6 +338,7 @@ Toute valorisation d'algorithmes, d'outils ou de technologies auprès d'entrepri
 ## Documentation principale
 
 - `docs/DATA_JOURNEY_MODEL.md` — modèle public de parcours des données ;
+- `docs/INFORMATION_WASTE_PUBLIC_ADAPTER.md` — lecture publique des déchets et frictions informationnels ;
 - `docs/LOCAL_ACTION_JOURNAL.md` — journal local navigateur ;
 - `docs/USER_LOCAL_STORAGE_EXPLANATION.md` — explication utilisateur du carnet local ;
 - `docs/AUTOMATIC_SITE_ENTITY_FETCH.md` — récupération volontaire URL / site / API ;
