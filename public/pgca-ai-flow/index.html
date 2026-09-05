@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Démonstrateur PGC-A appliqué à un flux IA : déclaratif RGPD, données observées et cohérence du parcours.">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self'">
+  <title>Flux IA · PGC-A × RGPD</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <link rel="stylesheet" href="../assets/brand.css">
+  <link rel="stylesheet" href="../assets/mesh-portal.css">
+  <link rel="stylesheet" href="./flow.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="shell hero-inner">
+      <img class="muze-brand-logo" src="../assets/brand-logo.svg" alt="Muze-X Lab — Collaborative Platform">
+      <p class="eyebrow">RGPD Data Journey · PGC-A</p>
+      <h1>Tester la cohérence d’un flux IA.</h1>
+      <p class="lead">Le déclaratif RGPD reste le point d’entrée. PGC-A ajoute une lecture de cohérence entre ce qui est annoncé et ce qui est observé dans un scénario synthétique.</p>
+      <div class="formula" aria-label="Chaîne de cohérence">
+        <span>LEGAL_ENTITY</span><span>→</span><span>DATA_JOURNEY</span><span>→</span><span>AI_FLOW</span><span>→</span><strong>PGC-A CONSISTENCY</strong>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell stack">
+    <section class="panel">
+      <p class="eyebrow">Principe</p>
+      <h2>Ne pas remplacer l’audit RGPD : l’enrichir.</h2>
+      <p>L’identification de la société ou de l’organisme, les sources publiques, les finalités, destinataires, durées et droits restent inchangés. Cette vue ajoute uniquement un test de cohérence sur un flux IA synthétique.</p>
+    </section>
+
+    <section class="panel" data-flow-demo>
+      <p class="eyebrow">Cas testable</p>
+      <h2>Une donnée annoncée comme non transmise apparaît dans le flux.</h2>
+      <p>Le scénario démarre avec trois catégories : texte métier, email et identifiant interne. Modifier le flux permet de voir immédiatement si l’état déclaré et l’état observé convergent.</p>
+
+      <div class="flow-chain" aria-label="Flux IA">
+        <article><span>1</span><strong>Application métier</strong><small>Déclaration RGPD</small></article>
+        <div>→</div>
+        <article><span>2</span><strong>Service IA</strong><small>Contexte transmis</small></article>
+        <div>→</div>
+        <article><span>3</span><strong>Restitution</strong><small>Réponse métier</small></article>
+      </div>
+
+      <div class="table-wrap">
+        <table class="entity-table">
+          <thead><tr><th>Donnée</th><th>Déclarée transmise</th><th>Observée</th><th>État</th></tr></thead>
+          <tbody>
+            <tr data-row="text"><td>Texte métier</td><td>Oui</td><td data-observed="text">Oui</td><td data-status="text">CONVERGENT</td></tr>
+            <tr data-row="email"><td>Email</td><td>Non</td><td data-observed="email">Oui</td><td data-status="email">À VÉRIFIER</td></tr>
+            <tr data-row="internal"><td>Identifiant interne</td><td>Non</td><td data-observed="internal">Non</td><td data-status="internal">CONVERGENT</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="metric-grid">
+        <article class="metric"><span>État global</span><strong data-global>À VÉRIFIER</strong></article>
+        <article class="metric"><span>Première divergence</span><strong data-divergence>Email</strong></article>
+        <article class="metric"><span>Test discriminant</span><strong>Retirer l’email puis rejouer</strong></article>
+      </div>
+
+      <div class="actions">
+        <button type="button" data-action="correct">Corriger le flux</button>
+        <button type="button" class="secondary" data-action="restore">Réintroduire la divergence</button>
+      </div>
+
+      <div class="callout">
+        <p data-live aria-live="polite"><strong>Résultat :</strong> l’email est déclaré non transmis mais observé dans le contexte IA. Aucune cause n’est déduite.</p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">Lecture</p>
+      <h2>Le même graphe, plusieurs vues.</h2>
+      <div class="principle-grid">
+        <article><strong>Vue RGPD</strong><span>Source · finalité · destinataire · durée · droits.</span></article>
+        <article><strong>Vue PGC-A</strong><span>Convergence · divergence · inconnue · test discriminant.</span></article>
+        <article><strong>Vue IA</strong><span>Entrée · contexte · sortie · version du flux.</span></article>
+        <article><strong>Résultat</strong><span>Audit enrichi sans remplacer les systèmes existants.</span></article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="muted">Démonstrateur entièrement synthétique. Aucun site, organisme ou service IA réel n’est audité ici.</p>
+      <p><a class="button secondary" href="../">Retour à l’audit RGPD</a></p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-inner">
+      <span>RGPD Data Journey Audit</span>
+      <span class="brand-credit">PGC-A · couche de cohérence</span>
+      <a href="https://muse-irs.github.io/muze-x-lab-collaborative-platform/pgca-demonstrator/">Démonstrateur PGC-A</a>
+    </div>
+  </footer>
+
+  <script src="./flow.js"></script>
+  <script src="../assets/mesh-portal.js"></script>
+</body>
+</html>
