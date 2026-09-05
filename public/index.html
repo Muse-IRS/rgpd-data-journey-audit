@@ -147,26 +147,11 @@
           <legend>Où ces informations sont situées sur le site</legend>
           <p class="muted">Une donnée sans emplacement est incomplète. Indiquer la page ou zone où elle apparaît : mentions légales, footer, confidentialité, CGV, contact, paiement, autre.</p>
           <div class="form-grid">
-            <div class="field">
-              <label for="entity-location">Emplacement de l'entité</label>
-              <input id="entity-location" name="entity-location" type="text" placeholder="Mentions légales, footer..." autocomplete="off">
-            </div>
-            <div class="field">
-              <label for="siren-location">Emplacement du SIREN</label>
-              <input id="siren-location" name="siren-location" type="text" placeholder="Mentions légales, CGV..." autocomplete="off">
-            </div>
-            <div class="field">
-              <label for="siret-location">Emplacement du SIRET</label>
-              <input id="siret-location" name="siret-location" type="text" placeholder="Mentions légales, facture..." autocomplete="off">
-            </div>
-            <div class="field">
-              <label for="address-location">Emplacement de l'adresse</label>
-              <input id="address-location" name="address-location" type="text" placeholder="Contact, mentions légales..." autocomplete="off">
-            </div>
-            <div class="field full">
-              <label for="rights-location">Emplacement des droits RGPD</label>
-              <input id="rights-location" name="rights-location" type="text" placeholder="Politique de confidentialité, formulaire, DPO..." autocomplete="off">
-            </div>
+            <div class="field"><label for="entity-location">Emplacement de l'entité</label><input id="entity-location" name="entity-location" type="text" placeholder="Mentions légales, footer..." autocomplete="off"></div>
+            <div class="field"><label for="siren-location">Emplacement du SIREN</label><input id="siren-location" name="siren-location" type="text" placeholder="Mentions légales, CGV..." autocomplete="off"></div>
+            <div class="field"><label for="siret-location">Emplacement du SIRET</label><input id="siret-location" name="siret-location" type="text" placeholder="Mentions légales, facture..." autocomplete="off"></div>
+            <div class="field"><label for="address-location">Emplacement de l'adresse</label><input id="address-location" name="address-location" type="text" placeholder="Contact, mentions légales..." autocomplete="off"></div>
+            <div class="field full"><label for="rights-location">Emplacement des droits RGPD</label><input id="rights-location" name="rights-location" type="text" placeholder="Politique de confidentialité, formulaire, DPO..." autocomplete="off"></div>
           </div>
         </fieldset>
 
@@ -197,131 +182,33 @@
       </form>
     </section>
 
+    <section class="callout" id="pgca-ai-layer">
+      <div>
+        <p class="eyebrow">Extension PGC-A · flux IA</p>
+        <h2>Ajouter une lecture de cohérence sans supprimer l’audit RGPD.</h2>
+        <p>L’identification de la société ou de l’organisme, les sources publiques, le Data Journey, les destinataires, finalités et droits restent le socle. PGC-A ajoute une comparaison entre état déclaré et fonctionnement observé, avec un test discriminant lorsque les deux divergent.</p>
+        <div class="formula" aria-label="Extension PGC-A">
+          <span>LEGAL_ENTITY</span><span>→</span><span>DATA_JOURNEY</span><span>→</span><span>AI_FLOW</span><span>→</span><strong>PGC-A CONSISTENCY</strong>
+        </div>
+      </div>
+      <div class="actions"><a class="button secondary" href="./pgca-ai-flow/">Tester un flux IA synthétique</a></div>
+    </section>
+
     <section class="result panel" id="result" hidden>
       <p class="eyebrow">Restitution locale</p>
       <h2>Lecture simple</h2>
-      <div id="gauge-host"></div>
-      <div id="ssf-host"></div>
-      <div id="entity-host"></div>
-      <div id="result-content" class="cards"></div>
+      <div id="gauge-host"></div><div id="ssf-host"></div><div id="entity-host"></div><div id="result-content" class="cards"></div>
     </section>
 
     <section class="panel" id="journey">
       <h2>Parcours des données</h2>
-      <ol class="journey">
-        <li>Utilisateur</li>
-        <li>Action volontaire : saisie URL, construction de liens ou import par collage</li>
-        <li>Ouverture possible des sources publiques sans compte : Pappers, Annuaire, API</li>
-        <li>Données saisies, observées ou collées depuis un résultat public</li>
-        <li>Recherche API publique si un SIREN, SIRET ou nom est exploitable</li>
-        <li>Pré-validation SSF-IRS : SAT / UNSAT / UNKNOWN</li>
-        <li>Trace locale visible dans le navigateur</li>
-        <li>Traitement local ou transmission externe explicitée</li>
-        <li>Entité réelle / responsable déclaré</li>
-        <li>Acteurs / destinataires</li>
-        <li>Finalités</li>
-        <li>Conservation</li>
-        <li>Droits</li>
-        <li>Moyens d'action</li>
-      </ol>
+      <ol class="journey"><li>Utilisateur</li><li>Action volontaire : saisie URL, construction de liens ou import par collage</li><li>Ouverture possible des sources publiques sans compte : Pappers, Annuaire, API</li><li>Données saisies, observées ou collées depuis un résultat public</li><li>Recherche API publique si un SIREN, SIRET ou nom est exploitable</li><li>Pré-validation SSF-IRS : SAT / UNSAT / UNKNOWN</li><li>Trace locale visible dans le navigateur</li><li>Traitement local ou transmission externe explicitée</li><li>Entité réelle / responsable déclaré</li><li>Acteurs / destinataires</li><li>Finalités</li><li>Conservation</li><li>Droits</li><li>Moyens d'action</li></ol>
     </section>
 
-    <section class="callout" id="data-value">
-      <div>
-        <p class="eyebrow">Valeur · Recommandations · Contrôle</p>
-        <h2>Quand mes données produisent de la valeur.</h2>
-        <p>La personnalisation peut être utile ou devenir du bruit. Une donnée peut aussi contribuer à un modèle économique sans que cela démontre une vente directe. Cette nouvelle lecture aide à distinguer usage, partage, valeur, recommandations et réglages possibles.</p>
-        <div class="formula" aria-label="Chaîne valeur des données">
-          <span>DONNÉE</span><span>→</span><span>USAGE</span><span>→</span><span>DESTINATAIRE</span><span>→</span><span>VALEUR</span><span>→</span><strong>CONTRÔLE</strong>
-        </div>
-      </div>
-      <div class="actions">
-        <a class="button secondary" href="./data-value/">Comprendre et paramétrer</a>
-      </div>
-    </section>
-
-    <section class="panel" id="information-waste">
-      <p class="eyebrow">Mise en intelligibilité</p>
-      <h2>Traiter les déchets informationnels</h2>
-      <p>Une information n'est pas considérée comme fausse ou inutile simplement parce qu'elle est incomplète. Le traitement cherche d'abord à déterminer ce qui lui manque pour redevenir compréhensible et réutilisable.</p>
-      <ul>
-        <li>doublon ou filiation non identifiée ;</li>
-        <li>version obsolète pour l'usage courant ;</li>
-        <li>provenance ou contexte manquant ;</li>
-        <li>information fragmentée entre plusieurs sources ;</li>
-        <li>divergence encore non résolue ;</li>
-        <li>niveau de certitude supérieur aux éléments disponibles.</li>
-      </ul>
-      <div class="formula" aria-label="Chaîne publique de traitement informationnel">
-        <span>INFORMATION</span>
-        <span>→</span>
-        <span>CONTEXT</span>
-        <span>→</span>
-        <span>PROVENANCE</span>
-        <span>→</span>
-        <span>QUALIFICATION</span>
-        <span>→</span>
-        <strong>PUBLIC_UNDERSTANDING</strong>
-      </div>
-      <p class="muted">Le statut reste relatif au contexte et au temps. `UNKNOWN` est une réponse valide ; divergence ne signifie pas automatiquement contradiction, et écarter un élément d'une restitution ne signifie pas supprimer sa source ou son historique.</p>
-    </section>
-
-    <section class="panel" id="local-journal">
-      <h2>Journal local des actions</h2>
-      <p>Cette interface tient un carnet local dans le navigateur. Il montre ce que cette page écrit localement : actions utiles, lecture générée, compteur, statuts SSF-IRS et dernier audit restaurable.</p>
-      <p class="muted">Dans cette version, ces éléments ne sont pas transmis automatiquement à un serveur. Les requêtes automatiques ne sont lancées qu'après action de l'utilisateur.</p>
-
-      <div class="local-storage-map">
-        <article>
-          <strong>Où ?</strong>
-          <span>Dans le navigateur utilisé, pour cette interface.</span>
-        </article>
-        <article>
-          <strong>Quoi ?</strong>
-          <span>Journal des actions, dernier audit local et dernier jeu de liens publics construit.</span>
-        </article>
-        <article>
-          <strong>Contrôle</strong>
-          <span>Afficher, exporter, restaurer, effacer.</span>
-        </article>
-      </div>
-
-      <div class="actions">
-        <button type="button" id="explain-local-storage">Expliquer simplement</button>
-        <button type="button" class="secondary" id="show-local-storage">Voir ce qui est stocké</button>
-        <button type="button" class="secondary" id="restore-last-audit">Restaurer le dernier audit</button>
-        <button type="button" id="refresh-log">Afficher / actualiser le journal</button>
-        <button type="button" class="secondary" id="export-log">Exporter JSON</button>
-        <button type="button" class="danger" id="clear-log">Effacer le journal local</button>
-        <button type="button" class="danger" id="clear-all-local-data">Effacer toutes les données locales</button>
-      </div>
-
-      <div id="local-storage-explanation" class="local-explanation" hidden></div>
-
-      <h3>Journal des actions</h3>
-      <pre id="log-output" aria-live="polite">Aucun affichage demandé.</pre>
-
-      <h3>Contenu local de cette interface</h3>
-      <pre id="storage-output" aria-live="polite">Aucun affichage demandé.</pre>
-    </section>
-
-    <section class="callout" id="limits">
-      <h2>Limites</h2>
-      <p>Cette interface ne produit pas de verdict juridique automatique. Elle aide à distinguer les faits observables, les déclarations trouvées, les données manipulées, leur emplacement, les requêtes lancées par l'utilisateur, les traces locales, les zones floues, le niveau de vigilance documentaire et les actions possibles. Une publicité après une conversation ne suffit pas à prouver une utilisation du microphone ; un partage déclaré ne suffit pas à prouver une vente directe.</p>
-    </section>
+    <section class="callout" id="data-value"><div><p class="eyebrow">Valeur · Recommandations · Contrôle</p><h2>Quand mes données produisent de la valeur.</h2><p>La personnalisation peut être utile ou devenir du bruit. Une donnée peut aussi contribuer à un modèle économique sans que cela démontre une vente directe. Cette nouvelle lecture aide à distinguer usage, partage, valeur, recommandations et réglages possibles.</p><div class="formula" aria-label="Chaîne valeur des données"><span>DONNÉE</span><span>→</span><span>USAGE</span><span>→</span><span>DESTINATAIRE</span><span>→</span><span>VALEUR</span><span>→</span><strong>CONTRÔLE</strong></div></div></section>
   </main>
 
-  <footer class="footer">
-    <div class="shell footer-inner">
-      <span>RGPD Data Journey Audit</span>
-      <span class="brand-credit">Identité visuelle co-conçue : Muze-X × ChatGPT (OpenAI)</span>
-      <a href="./data-value/">Valeur des données</a>
-      <a href="./privacy.html">Confidentialité</a>
-    </div>
-  </footer>
-
-  <script src="./assets/app.js"></script>
-  <script src="./assets/entity-auto-fetch.js"></script>
-  <script src="assets/mesh-portal.js"></script>
+  <footer class="site-footer"><div class="shell footer-inner"><span>RGPD Data Journey Audit</span><span class="brand-credit">Muze-X Lab · Collaborative Platform</span><a href="https://muse-irs.github.io/muze-x-lab-collaborative-platform/">Plateforme Muze-X</a></div></footer>
+  <script src="./assets/app.js"></script><script src="./assets/entity-auto-fetch.js"></script><script src="./assets/mesh-portal.js"></script>
 </body>
 </html>
